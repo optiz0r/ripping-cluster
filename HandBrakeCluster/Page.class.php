@@ -29,10 +29,10 @@ class HandBrakeCluster_Page {
 
     public function evaluate() {
         $code_filename = 'pages/' . $this->page . '.php';
-        if (!file_exists($code_filename)) {
-            throw new Exception("Template code file does not exist: '$code_filename'");
+
+        if (file_exists($code_filename)) {
+            eval("include '$code_filename';");
         }
-        eval("include '$code_filename';");
         
     }
 
