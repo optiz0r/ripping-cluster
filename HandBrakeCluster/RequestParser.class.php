@@ -13,8 +13,11 @@ class HandBrakeCluster_RequestParser {
     }
 
     public function parse() {
-        $components = explode('/', $this->request_string);
+        if (!$this->request_string) {
+            return;
+        }
 
+        $components = explode('/', $this->request_string);
         if (!$components) {
             return;
         }

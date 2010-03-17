@@ -18,7 +18,7 @@ class HandBrakeCluster_Page {
     }
 
     public function template_filename() {
-        $template_filename = $this->page() . '.tpl';
+        $template_filename = $this->page . '.tpl';
 
         if (!$this->smarty->template_exists($template_filename)) {
             $template_filename = 'home.tpl';
@@ -28,9 +28,9 @@ class HandBrakeCluster_Page {
     }
 
     public function evaluate() {
-        $code_filename = 'pages/' . $this->page() . '.php';
+        $code_filename = 'pages/' . $this->page . '.php';
         if (!file_exists($code_filename)) {
-            throw Exception('Template code file does not exist!');
+            throw new Exception("Template code file does not exist: '$code_filename'");
         }
         eval("include '$code_filename';");
         
