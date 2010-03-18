@@ -14,16 +14,6 @@ label {
     margin-right: 1em;
 }
 
-table {
-}
-
-tr {
-}
-
-tr:hover {
-    background-color: lightBlue;
-}
-
 #container {
     width: 75%;
     min-width: 75em;
