@@ -13,8 +13,16 @@ class HandBrakeCluster_Main {
     private $request;
 
     private function __construct() {
-        $this->smarty = new Smarty();
+        $request_string = isset($_GET['l']) ? $_GET['l'] : '';
 
+        $this->config   = new HandBrakeCluster_Config("dbconfig.conf");
+        $this->database = new HandBrakeCluster_Database($this->config);
+        $this->config->setDatabase($this->database);
+
+        $this->log      = new HandBrakeCluster_Log($this->database, $this->config);
+        $this->request = new HandBrakeCluster_RequestParser($request_string);
+
+        $this->smarty = new Smarty();
         $this->smarty->template_dir = './templates';
         $this->smarty->compile_dir  = './tmp/templates';
         $this->smarty->cache_dir    = './tmp/cache';
@@ -23,8 +31,6 @@ class HandBrakeCluster_Main {
         $this->smarty->assign('version', '0.1');
         $this->smarty->assign('base_uri', '/handbrake/');
 
-        $request_string = isset($_GET['l']) ? $_GET['l'] : '';
-        $this->request = new HandBrakeCluster_RequestParser($request_string);
     }
 
     public static function instance() {
@@ -67,6 +73,12 @@ class HandBrakeCluster_Main {
 
         // Ensure the class to load begins with our prefix
         if (!preg_match('/^HandBrakeCluster_/', $classname)) {
+            return;
+        }
+
+        // Special case: All exceptions are stored in the same file
+        if (preg_match('/^HandBrakeCluster_Exception_/', $classname)) {
+            require_once('HandBrakeCluster/Exceptions.class.php');
             return;
         }
 

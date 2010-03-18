@@ -39,6 +39,7 @@ class HandBrakeCluster_RequestParser {
         if (isset($this->vars[$key])) {
             return $this->vars[$key];
         }
+
         return null;
     }
 
