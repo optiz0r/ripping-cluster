@@ -10,7 +10,7 @@
     <em>There are no currently running jobs.</em>
 {/if}
 
-<h3>Completed Jobs</h3>
+<h3>Recently Completed Jobs</h3>
 
 {if $completed_jobs}
     <ul>
@@ -20,5 +20,17 @@
     </ul>
 {else}
     <em>There are no recently completed jobs.</em>
+{/if}
+
+<h3>Recently Failed Jobs</h3>
+
+{if $failed_jobs}
+    <ul>
+        {foreach from=$failed_jobs item=job}
+            <li><a href="{$base_uri}job-details/id/{$job->id()}" title="View job details">Job {$job->id()}</a></li>
+        {/foreach}
+    </ul>
+{else}
+    <em>There are no recently failed jobs.</em>
 {/if}
 
