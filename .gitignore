@@ -1,4 +1,7 @@
 *.swp
+.buildpath
+.project
+.settings
 .htaccess
 dbconfig.conf
 tmp/*
