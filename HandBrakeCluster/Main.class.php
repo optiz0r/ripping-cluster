@@ -29,7 +29,7 @@ class HandBrakeCluster_Main {
         $this->smarty->config_fir   = './config';
 
         $this->smarty->assign('version', '0.1');
-        $this->smarty->assign('base_uri', '/handbrake/');
+        $this->smarty->assign('base_uri', dirname($_SERVER['SCRIPT_NAME']) . '/');
 
     }
 

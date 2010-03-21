@@ -42,6 +42,10 @@ class HandBrakeCluster_RequestParser {
 
         return null;
     }
+    
+    public function request_string() {
+        return $this->request_string;
+    }
 
 };
 

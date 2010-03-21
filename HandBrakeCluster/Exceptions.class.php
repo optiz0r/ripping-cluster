@@ -10,4 +10,8 @@ class HandBrakeCluster_Exception_ResultCountMismatch   extends Exception {};
 
 class HandBrakeCluster_Exception_UnknownSetting        extends Exception {};
 
+class HandBrakeCluster_Exception_TemplateException     extends Exception {};
+class HandBrakeCluster_Exception_Unauthorized          extends HandBrakeCluster_Exception_TemplateException {};
+class HandBrakeCluster_Exception_FileNotFound          extends HandBrakeCluster_Exception_TemplateException {};
+
 ?>
