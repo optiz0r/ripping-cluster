@@ -11,6 +11,7 @@ class HandBrakeCluster_Main {
     private $database;
     private $log;
     private $request;
+    private $cache;
 
     private function __construct() {
         $request_string = isset($_GET['l']) ? $_GET['l'] : '';
@@ -20,8 +21,9 @@ class HandBrakeCluster_Main {
         $this->config->setDatabase($this->database);
 
         $this->log      = new HandBrakeCluster_Log($this->database, $this->config);
-        $this->request = new HandBrakeCluster_RequestParser($request_string);
-
+        $this->request  = new HandBrakeCluster_RequestParser($request_string);
+        $this->cache    = new HandBrakeCluster_Cache($this->config);
+        
         $this->smarty = new Smarty();
         $this->smarty->template_dir = './templates';
         $this->smarty->compile_dir  = './tmp/templates';
@@ -60,6 +62,10 @@ class HandBrakeCluster_Main {
     public function request() {
         return $this->request;
     }
+    
+    public function cache() {
+        return $this->cache;
+    }
 
     public static function initialise() {
         spl_autoload_register(array('HandBrakeCluster_Main','autoload'));
@@ -92,6 +98,21 @@ class HandBrakeCluster_Main {
         if (file_exists($filename)) {
             require_once $filename;
         }
+    }
+    
+    public static function mkdir_recursive($directory, $permissions=0777) {
+        $parts = explode('/', $directory);
+        $path = '';
+        for ($i=1,$l=count($parts); $i<=$l; $i++) {
+            $iPath = $parts;
+            $path = join('/', array_slice($iPath, 0, $i));
+            if (empty($path)) continue;
+            if (!file_exists($path)) {
+                if (!mkdir($path)) return false;
+                if (!chmod($path, $permissions)) return false;
+            }
+        }
+        return true;
     }
 }
 
