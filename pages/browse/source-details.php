@@ -18,11 +18,10 @@ if (substr($real_source_path, 0, strlen($real_source_dir)) != $real_source_dir) 
     return;
 }
 
-$source = new HandBrakeCluster_Rips_Source($source_path);
+$source = HandBrakeCluster_Rips_Source::load($source_path);
 
 $this->smarty->assign('source_path', $source_path);
 $this->smarty->assign('source', $source);
-$this->smarty->assign('output', $source->output());
 $this->smarty->assign('titles', $source->titles());
 
 ?>
