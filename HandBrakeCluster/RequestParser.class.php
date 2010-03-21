@@ -14,6 +14,7 @@ class HandBrakeCluster_RequestParser {
 
     public function parse() {
         if (!$this->request_string) {
+        	$this->page = array('home');
             return;
         }
 
