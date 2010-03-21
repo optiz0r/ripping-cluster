@@ -23,5 +23,6 @@ $source = new HandBrakeCluster_Rips_Source($source_path);
 $this->smarty->assign('source_path', $source_path);
 $this->smarty->assign('source', $source);
 $this->smarty->assign('output', $source->output());
+$this->smarty->assign('titles', $source->titles());
 
 ?>
