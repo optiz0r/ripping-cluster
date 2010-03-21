@@ -6,15 +6,33 @@ class HandBrakeCluster_Rips_Source {
     const PM_CHAPTER = 1;
     const PM_AUDIO = 2;
     const PM_SUBTITLE = 3;
-
+    
     protected $source;
     protected $output;
     protected $titles = array();
 
-    public function __construct($source) {
-        $this->source = $source;
+    public function __construct($source_filename, $use_cache) {
+        $this->source = $source_filename;
 
         $this->scan();
+
+        $main   = HandBrakeCluster_Main::instance();
+        $cache  = $main->cache();
+        $config = $main->config();
+        
+        if ($use_cache) {
+            $cache->store($this->source, serialize($this), $config->get('rips.cache_ttl'));
+        }
+    }
+    
+    public static function load($source_filename, $use_cache = true) {
+        $cache = HandBrakeCluster_Main::instance()->cache();
+
+        if ($use_cache && $cache->exists($source_filename)) {
+            return unserialize($cache->fetch($source_filename));
+        } else {
+            return new HandBrakeCluster_Rips_Source($source_filename, $use_cache);
+        }
     }
 
     protected function scan() {
@@ -122,6 +140,14 @@ class HandBrakeCluster_Rips_Source {
         if ($title) {
             $this->addTitle($title);
         }
+    }
+    
+    public static function isCached($source_filename) {
+        $main   = HandBrakeCluster_Main::instance();
+        $cache  = $main->cache();
+        $config = $main->config();
+
+        return $cache->exists($source_filename, $config->get('rips.cache_ttl'));
     }
     
     public function addTitle(HandBrakeCluster_Rips_SourceTitle $title) {
