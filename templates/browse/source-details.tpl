@@ -16,7 +16,7 @@
 			</tr>
 			<tr>
 				<th>Output</th>
-				<td>{$output|escape:"html"}</td>
+				<td><pre>{$output|escape:"html"}</pre></td>
 			</tr>
 		</tbody>
 	</table>

@@ -15,14 +15,18 @@ class HandBrakeCluster_Rips_Source {
         $source_shell = escapeshellarg($this->source);
         $handbrake_cmd = "HandBrakeCLI -i {$source_shell} -t 0"; 
         
-        $handbrake_pid = popen($handbrake_cmd, 'r');
-        $handbrake_output = fread($handbrake_pid, 1024);
-        while (!feof($handbrake_pid)) {
-            $handbrake_output = fread($handbrake_pid, 1024);
-        }
-        pclose($handbrake_pid);
-        
-        
+        $handbrake_pid = proc_open($handbrake_cmd, array(
+            0 => array("pipe", "r"),
+            1 => array("pipe", "w"),
+            2 => array("pipe", "w")
+        ), $pipes);
+
+        $handbrake_output = stream_get_contents($pipes[2]);
+        fclose($pipes[0]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($handbrake_pid);
+
         // Process the output
         $lines = explode("\n", $handbrake_output);
         foreach ($lines as $line) {
@@ -31,12 +35,12 @@ class HandBrakeCluster_Rips_Source {
                 continue;
             }
             
-            $this->output .= $line;
+            $this->output .= $line . "\n";
         }
     }
     
     public function output() {
-        return $output;
+        return $this->output;
     }
 };
 

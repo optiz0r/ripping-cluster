@@ -23,7 +23,7 @@ class HandBrakeCluster_Rips_SourceLister {
             $dir = dir(array_shift($scan_directories));
             
             while (($entry = $dir->read()) !== false) {
-                if ($entry == '.' || $entry == '..') {
+                if ($entry == '.' || $entry == '..' || $entry == 'lost+found') {
                     continue;
                 }
                 
