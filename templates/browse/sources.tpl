@@ -6,7 +6,7 @@
 	</p>
 	<ul>
 		{foreach from=$sources item=source}
-			<li>{$source|escape:'html'}</li>
+			<li><a href="{$base_uri}browse/source-details/id/{$source|base64_encode|replace:"/":"-"}" title="View source details">{$source|escape:'html'}</a></li>
 		{/foreach}
 	</ul>
 {else}
