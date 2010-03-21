@@ -12,7 +12,11 @@
 		<tbody>
 			<tr>
 				<th>Source</th>
-				<td>{$source|escape:"html"}</td>
+				<td>{$source_path|escape:"html"}</td>
+			</tr>
+			<tr>
+				<th>Output</th>
+				<td>{$output|escape:"html"}</td>
 			</tr>
 		</tbody>
 	</table>
