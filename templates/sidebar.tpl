@@ -5,7 +5,7 @@
 
     <li>Browse
 	    <ul>
-			<li><a href="{$base_uri}browse/sources" title="Browse Sources">Sources</a></li>
+			<li><a href="{$base_uri}rips/sources" title="Browse Sources">Sources</a></li>
     	</ul>
     </li>
 </ul>
