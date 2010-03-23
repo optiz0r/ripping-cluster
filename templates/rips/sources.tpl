@@ -10,7 +10,11 @@
 	</p>
 	<ul>
 		{foreach from=$sources item=source}
-			<li><a href="{$base_uri}rips/source-details/id/{$source|base64_encode|replace:"/":"-"}" title="View source details">{$source|escape:'html'}</a>{if $sources_cached.$source} (cached){/if}</li>
+			<li>
+				[ <a href="{$base_uri}rips/source-details/id/{$source|base64_encode|replace:"/":"-"}" title="Browse source details">Browse</a> |
+				  <a href="{$base_uri}rips/setup-rip/id/{$source|base64_encode|replace:"/":"-"}" title="Rip this source">Rip</a> ]
+				{$source|escape:'html'}{if $sources_cached.$source} (cached){/if}
+			</li>
 		{/foreach}
 	</ul>
 {else}
