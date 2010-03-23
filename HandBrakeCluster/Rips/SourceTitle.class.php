@@ -41,6 +41,11 @@ class HandBrakeCluster_Rips_SourceTitle {
 		return $this->duration;
 	}
 	
+	public function durationInSeconds() {
+	    $time = explode(":", $this->duration);
+	    return ($time[0] * 3600) + ($time[1] * 60) + $time[2]; 
+	}
+	
 	public function setDuration($duration) {
 		$this->duration = $duration;
 	}

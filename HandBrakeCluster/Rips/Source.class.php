@@ -153,6 +153,27 @@ class HandBrakeCluster_Rips_Source {
     public function addTitle(HandBrakeCluster_Rips_SourceTitle $title) {
         $this->titles[] = $title;
     }
+    
+	public function longestTitle() {
+	    $longest_title = null;
+	    $maximum_duration = 0;
+	    
+	    if ( ! $this->titles) {
+	        return null;
+	    }
+	    
+	    foreach ($this->titles as $title) {
+	        $duration = $title->durationInSeconds();
+	        if ($duration > $maximum_duration) {
+	            $longest_title = $title;
+	            $maximum_duration = $duration;
+	        }
+	    }
+	    
+	    return $longest_title;
+	}
+	
+    
 
     public function output() {
         return $this->output;
