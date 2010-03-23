@@ -58,7 +58,13 @@ class HandBrakeCluster_RequestParser {
 
         // The subsequent tokens are parameters for this page in key value pairs
         while ($components) {
-            $this->vars[array_shift($components)] = $components ? array_shift($components) : null;
+            // If the url ended with a trailing slash, the last element will be null
+            $last_element = $components[count($components) - 1];
+            if ($last_element == "") {
+                array_pop($components);
+            }
+            
+            $this->vars[array_shift($components)] = $components ? array_shift($components) : true;
         }
     }
 
@@ -66,12 +72,16 @@ class HandBrakeCluster_RequestParser {
         return join('/', $this->page);
     }
 
-    public function get($key) {
+    public function get($key, $default = null) {
         if (isset($this->vars[$key])) {
             return $this->vars[$key];
         }
+        
+        if (is_subclass_of($default, HandBrakeCluster_Exception)) {
+            throw new $default();
+        }
 
-        return null;
+        return $default;
     }
     
     public function request_string() {
