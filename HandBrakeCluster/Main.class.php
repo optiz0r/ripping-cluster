@@ -83,7 +83,7 @@ class HandBrakeCluster_Main {
         }
 
         // Special case: All exceptions are stored in the same file
-        if (preg_match('/^HandBrakeCluster_Exception_/', $classname)) {
+        if (preg_match('/^HandBrakeCluster_Exception/', $classname)) {
             require_once('HandBrakeCluster/Exceptions.class.php');
             return;
         }
@@ -113,6 +113,18 @@ class HandBrakeCluster_Main {
             }
         }
         return true;
+    }
+    
+    public static function issetelse($var, $default = null) {
+        if (isset($var)) {
+            return $var;
+        }
+        
+        if (is_subclass_of($default, HandBrakeCluster_Exception)) {
+            throw new $e();
+        }
+        
+        return $default;
     }
 }
 
