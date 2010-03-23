@@ -6,9 +6,9 @@
         </script>
         <link rel="stylesheet" type="text/css" href="{$base_uri}styles/normal.css" />
         
-        <link type="text/css" href="styles/3rdparty/jquery/smoothness/jquery-ui-1.8.custom.css" rel="Stylesheet" />	
-		<script type="text/javascript" src="scripts/3rdparty/jquery-1.4.2.min.js"></script>
-		<script type="text/javascript" src="scripts/3rdparty/jquery-ui-1.8.custom.min.js"></script>
+        <link type="text/css" href="{$base_uri}styles/3rdparty/jquery-ui/smoothness/jquery-ui-1.8.custom.css" rel="Stylesheet" />	
+		<script type="text/javascript" src="{$base_uri}scripts/3rdparty/jquery-1.4.2.js"></script>
+		<script type="text/javascript" src="{$base_uri}scripts/3rdparty/jquery-ui-1.8.custom.min.js"></script>
     </head>
     <body>
 
