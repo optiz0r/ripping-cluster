@@ -33,4 +33,10 @@
 		</tr>
 	</tbody>
 </table>
+
+<p>
+	<em>Note:</em> Exception details should not be displayed on production systems.
+	Disable the <a href="{$base_uri}admin/settings/key/debug.show_exceptions/"><code>debug.show_exceptions</code></a>
+	setting to omit the exception details from this page.
+</p>
 {/if} 
