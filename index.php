@@ -6,9 +6,10 @@ try {
     $smarty = $main->smarty();
     
     $page = new HandBrakeCluster_Page($smarty, $main->request());
-    $page->evaluate();
+    if ($page->evaluate()) {
+        $smarty->display('index.tpl');
+    }
     
-    $smarty->display('index.tpl');
 } catch (HandBrakeCluster_Exception $e) {
     die("Uncaught Exception: " . $e->getMessage());
 }
