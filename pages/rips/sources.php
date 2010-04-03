@@ -8,7 +8,7 @@ $sources = $lister->sources();
 
 $sources_cached = array();
 foreach ($sources as $source) {
-    $sources_cached[$source] = HandBrakeCluster_Rips_Source::isCached($source);
+    $sources_cached[$source->filename()] = HandBrakeCluster_Rips_Source::isCached($source->filename());
 }
 
 $this->smarty->assign('sources', $sources);

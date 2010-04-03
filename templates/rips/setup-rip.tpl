@@ -1,17 +1,18 @@
 <h2>Setup Rips</h2>
 
 {if $rips_submitted}
-	<p>
-		Processing rips now...
-	</p>
+	<h3>Jobs Queued</h3>
 	
-	<pre>{$rips|var_dump}</pre>
+	<p>
+		The rips have been queued, and processing has begun in the background. View the <a href="{$base_uri}jobs/" title="View running jobs">Jobs</a> page
+		to see a list of running jobs, or the <a href="{$base_uri}logs/" title="View logs">logs</a> page for more detailed progress information.
+	</p>
 {else}
 	<form name="setup-rips" id="setup-rips" action="{$base_uri}rips/setup-rip/submit/" method="post">
 		<fieldset>
 			<legend>Configure titles to rip</legend>
 			
-			<input type="hidden" name="id" value="{$source_path_encoded}" />
+			<input type="hidden" name="id" value="{$source->filenameEncoded()|escape:"html"}" />
 	
 			<input type="submit" name="submit" value="Queue rips" />
 			
@@ -24,9 +25,6 @@
 			    			
 			    			<input type="checkbox" id="rip-title-{$title->id()}" name="rips[{$title->id()}][queue]" value="1" />
 			    			<label for="rip-title-{$title->id()}">Rip this title</label>
-			    			
-			    			<input type="checkbox" id="rip-chapters-{$title->id()}" name="rips[{$title->id()}][include-chapters]" value="{$title->id()}" checked="checked" />
-			    			<label for="rip-title-{$title->id()}">Include chapter markers</label>
 			    			
 			    			<hr />
 			    			

@@ -12,7 +12,7 @@
 		<tbody>
 			<tr>
 				<th>Source</th>
-				<td>{$source_path|escape:"html"}</td>
+				<td>{$source->filename()|escape:"html"}</td>
 			</tr>
 			{if $titles}
 				<tr>

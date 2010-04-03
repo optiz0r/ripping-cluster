@@ -1,6 +1,6 @@
 <?php
 
-$jobs = HandBrakeCluster_Job::all(HandBrakeCluster_Main::instance()->database());
+$jobs = HandBrakeCluster_Job::all();
 $this->smarty->assign('jobs', $jobs);
 
 ?>

@@ -15,7 +15,7 @@
                 {assign var=current_status value=$job->currentStatus()}
                 <tr>
                     <td><a href="{$base_uri}/job-details/id/{$job->id()}" title="View job details">{$job->name()}</a></td>
-                    <td>{$job->destination()}</td>
+                    <td>{$job->destinationFilename()}</td>
                     <td>{$job->title()}</td>
                     <td>{$current_status->statusName()}</td>
                 </tr>
