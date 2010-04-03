@@ -52,7 +52,8 @@ class HandBrakeCluster_Database {
 
 			$result = $stmt->execute();
 			if (!$result) {
-				throw new HandBrakeCluster_Exception_DatabaseQueryFailed();
+                list($code, $dummy, $message) = $stmt->errorInfo();
+                throw new HandBrakeCluster_Exception_DatabaseQueryFailed($message, $code);
 			}
 
 			return $stmt->fetchAll();
@@ -83,15 +84,47 @@ class HandBrakeCluster_Database {
 
         if ($bind_params) {
             foreach ($bind_params as $param) {
-                $stmt->bindValue(':'.$param['name'], $param['value'], $param['type']);
+                if (isset($param['type'])) {
+                    $stmt->bindValue(':'.$param['name'], $param['value'], $param['type']);
+                } else {
+                    $stmt->bindValue(':'.$param['name'], $param['value']);
+                }
             }
         }
 
-        return $stmt->execute();
+        $result = $stmt->execute();
+        if (!$result) {
+            list($code, $dummy, $message) = $stmt->errorInfo();
+            throw new HandBrakeCluster_Exception_DatabaseQueryFailed($message, $code);
+        }
+    }
+    
+    public function update($sql, $bind_params = null) {
+        $stmt = $this->dbh->prepare($sql);
+
+        if ($bind_params) {
+            foreach ($bind_params as $param) {
+                if (isset($param['type'])) {
+                    $stmt->bindValue(':'.$param['name'], $param['value'], $param['type']);
+                } else {
+                    $stmt->bindValue(':'.$param['name'], $param['value']);
+                }
+            }
+        }
+
+        $result = $stmt->execute();
+        if (!$result) {
+            list($code, $dummy, $message) = $stmt->errorInfo();
+            throw new HandBrakeCluster_Exception_DatabaseQueryFailed($message, $code);
+        }
     }
 
     public function errorInfo() {
         return $this->dbh->errorInfo();
+    }
+    
+    public function lastInsertId() {
+        return $this->dbh->lastInsertId();
     }
 
 }
