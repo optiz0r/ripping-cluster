@@ -11,28 +11,49 @@ class HandBrakeCluster_Rips_Source {
     protected $output;
     protected $titles = array();
 
-    public function __construct($source_filename, $use_cache) {
+    protected function __construct($source_filename, $scan_dir, $use_cache) {
         $this->source = $source_filename;
-
-        $this->scan();
+        
+        if ($scan_dir) {
+            $this->scan();
+        }
 
         $main   = HandBrakeCluster_Main::instance();
         $cache  = $main->cache();
         $config = $main->config();
         
-        if ($use_cache) {
+        if ($scan_dir && $use_cache) {
             $cache->store($this->source, serialize($this), $config->get('rips.cache_ttl'));
         }
     }
     
-    public static function load($source_filename, $use_cache = true) {
+    public static function load($source_filename, $scan_dir = true, $use_cache = true) {
         $cache = HandBrakeCluster_Main::instance()->cache();
 
         if ($use_cache && $cache->exists($source_filename)) {
             return unserialize($cache->fetch($source_filename));
         } else {
-            return new HandBrakeCluster_Rips_Source($source_filename, $use_cache);
+            return new HandBrakeCluster_Rips_Source($source_filename, $scan_dir, $use_cache);
         }
+    }
+    
+    public static function loadEncoded($encoded_filename, $scan_dir = true, $use_cache = true) {
+        // Decode the filename
+        $source_filename = base64_decode(str_replace('-', '/', $encoded_filename));
+
+        // Ensure the source is a valid directory, and lies below the configured source_dir
+        $real_source_filename = realpath($source_filename);
+        if (!is_dir($source_filename)) {
+            throw new HandBrakeCluster_Exception_InvalidSourceDirectory($source_filename);
+        }
+        
+        $config = HandBrakeCluster_Main::instance()->config();
+        $real_source_basedir = realpath($config->get('rips.source_dir'));
+        if (substr($real_source_filename, 0, strlen($real_source_basedir)) != $real_source_basedir) {
+            throw new HandBrakeCluster_Exception_InvalidSourceDirectory($source_filename);
+        }
+                
+        return self::load($source_filename, $scan_dir, $use_cache);
     }
 
     protected function scan() {
@@ -150,6 +171,10 @@ class HandBrakeCluster_Rips_Source {
         return $cache->exists($source_filename, $config->get('rips.cache_ttl'));
     }
     
+    public static function encodeFilename($filename) {
+        return str_replace("/", "-", base64_encode($filename));
+    }
+    
     public function addTitle(HandBrakeCluster_Rips_SourceTitle $title) {
         $this->titles[] = $title;
     }
@@ -173,7 +198,13 @@ class HandBrakeCluster_Rips_Source {
 	    return $longest_title;
 	}
 	
+    public function filename() {
+        return $this->source;
+    }
     
+    public function filenameEncoded() {
+        return self::encodeFilename($this->source);
+    }
 
     public function output() {
         return $this->output;

@@ -37,7 +37,7 @@ class HandBrakeCluster_Rips_SourceLister {
                 // otherwise add the dir to the queue to scan deeper
                 $source_vts = $source . DIRECTORY_SEPARATOR . 'VIDEO_TS';
                 if (is_dir($source_vts)) {
-                    $this->sources[] = $source_vts;
+                    $this->sources[] = HandBrakeCluster_Rips_Source::load($source_vts, false);
                 } else {
                     $scan_directories[] = $source;
                 }
