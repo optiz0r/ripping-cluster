@@ -14,7 +14,7 @@ class HandBrakeCluster_Log {
     }
 
     public function log($severity, $message, $job_id = 0) {
-        $result = $this->database->insert('INSERT INTO client_log (job_id,level,ctime,pid,hostname,progname,line,message) VALUES(:job_id, :level, :ctime, :pid, :hostname, :progname, :line, :message)',
+        $this->database->insert('INSERT INTO client_log (job_id,level,ctime,pid,hostname,progname,line,message) VALUES(:job_id, :level, :ctime, :pid, :hostname, :progname, :line, :message)',
             array(
                 array('name' => 'job_id', 'value' => $job_id, 'type' => PDO::PARAM_INT),
                 array('name' => 'level', 'value' => $severity, 'type' => PDO::PARAM_STR),
@@ -26,17 +26,13 @@ class HandBrakeCluster_Log {
                 array('name' => 'message', 'value' => $message, 'type' => PDO::PARAM_STR)
             )
         );
-
-        if (!$result) {
-            var_dump($this->database->errorInfo());
-        }
     }
 
     public function debug($message, $job_id = 0) {
         return $this->log('DEBUG', $message, $job_id);
     }
 
-    public function info($messgae, $job_id = 0) {
+    public function info($message, $job_id = 0) {
         return $this->log('INFO', $message, $job_id);
     }
 
