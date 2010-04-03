@@ -31,6 +31,10 @@
 			<th>Message</th>
 			<td>{$exception->getMessage()}</td>
 		</tr>
+		<tr>
+			<th>Stack Trace</th>
+			<td><pre>{$exception->getTrace()|print_r}</pre></td>
+		</tr>
 	</tbody>
 </table>
 
