@@ -12,6 +12,8 @@ class HandBrakeCluster_Main {
     private $log;
     private $request;
     private $cache;
+    
+    private $base_uri;
 
     private function __construct() {
         $request_string = isset($_GET['l']) ? $_GET['l'] : '';
@@ -31,10 +33,16 @@ class HandBrakeCluster_Main {
         $this->smarty->config_fir   = './config';
 
         $this->smarty->assign('version', '0.1');
-        $this->smarty->assign('base_uri', dirname($_SERVER['SCRIPT_NAME']) . '/');
+        
+        $this->base_uri = dirname($_SERVER['SCRIPT_NAME']) . '/';
+        $this->smarty->assign('base_uri', $this->base_uri);
 
     }
 
+    /**
+     * 
+     * @return HandBrakeCluster_Main
+     */
     public static function instance() {
         if (!self::$instance) {
             self::$instance = new HandBrakeCluster_Main();
@@ -47,24 +55,56 @@ class HandBrakeCluster_Main {
         return $this->smarty;
     }
 
+    /**
+     * 
+     * @return HandBrakeCluster_Config
+     */
     public function config() {
         return $this->config;
     }
 
+    /**
+     * 
+     * @return HandBrakeCluster_Database
+     */
     public function database() {
         return $this->database;
     }
 
+    /**
+     * 
+     * @return HandBrakeCluster_Log
+     */
     public function log() {
         return $this->log;
     }
 
+    /**
+     * 
+     * @return HandBrakeCluster_RequestParser
+     */
     public function request() {
         return $this->request;
     }
     
+    /**
+     * 
+     * @return HandBrakeCluster_Cache
+     */
     public function cache() {
         return $this->cache;
+    }
+    
+    public function baseUri() {
+        return $this->base_uri;
+    }
+    
+    public function absoluteUrl($relative_url) {
+        $secure = isset($_SERVER['secure']);
+        $port = $_SERVER['HTTP_PORT'];
+        return 'http' . ($secure ? 's' : '') . '://'
+            . $_SERVER['HTTP_HOST'] . (($port == 80 || ($secure && $port == 443)) ? '' : ':' . $port)
+            . '/' . $this->base_uri . $relative_url; 
     }
 
     public static function initialise() {
@@ -120,12 +160,13 @@ class HandBrakeCluster_Main {
             return $var;
         }
         
-        if (is_subclass_of($default, HandBrakeCluster_Exception)) {
-            throw new $e();
+        if (preg_match('/^HandBrakeCluster_Exception/', $default) && class_exists($default) && is_subclass_of($default, HandBrakeCluster_Exception)) {
+            throw new $default();
         }
         
         return $default;
     }
+    
 }
 
 HandBrakeCluster_Main::initialise();

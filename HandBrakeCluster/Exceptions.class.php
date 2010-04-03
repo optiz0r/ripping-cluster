@@ -13,6 +13,7 @@ class HandBrakeCluster_Exception_ConfigException        extends HandBrakeCluster
 class HandBrakeCluster_Exception_UnknownSetting         extends HandBrakeCluster_Exception_ConfigException {};
 
 class HandBrakeCluster_Exception_TemplateException      extends HandBrakeCluster_Exception {};
+class HandBrakeCluster_Exception_AbortEntirePage        extends HandBrakeCluster_Exception_TemplateException {}; 
 class HandBrakeCluster_Exception_Unauthorized           extends HandBrakeCluster_Exception_TemplateException {};
 class HandBrakeCluster_Exception_FileNotFound           extends HandBrakeCluster_Exception_TemplateException {};
 class HandBrakeCluster_Exception_InvalidParameters      extends HandBrakeCluster_Exception_TemplateException {};

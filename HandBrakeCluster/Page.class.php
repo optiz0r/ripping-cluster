@@ -27,13 +27,17 @@ class HandBrakeCluster_Page {
 
         try {
             $this->render($template_filename, $code_filename, $template_variables);
+        } catch (HandBrakeCluster_Exception_AbortEntirePage $e) {
+            return false;
         } catch (HandBrakeCluster_Exception_FileNotFound $e) {
             $this->render('errors/404.tpl', 'errors/404.php');
-        } catch (HandBrakeCluster_Exception_TemplateException $e) {
+        } catch (HandBrakeCluster_Exception $e) {
             $this->render('errors/unhandled-exception.tpl', 'errors/unhandled-exception.php', array(
                 'exception' => $e,
             ));
         } 
+        
+        return true;
     }
     
     protected function render($template_filename, $code_filename = null, $template_variables = array()) {
@@ -55,6 +59,14 @@ class HandBrakeCluster_Page {
         
         // Now execute the template itself, which will render the results of the code file
         $this->smarty->assign('page_content', $this->smarty->fetch($template_filename));
+    }
+    
+    public static function redirect($relative_url) {
+        $absolute_url = HandBrakeCluster_Main::instance()->absoluteUrl($relative_url);
+        
+        header("Location: $absolute_url");
+        
+        throw new HandBrakeCluster_Exception_AbortEntirePage();
     }
 
 };
