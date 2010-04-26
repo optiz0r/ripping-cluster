@@ -13,7 +13,7 @@ class HandBrakeCluster_Rips_SourceLister {
     
     public function scan() {
         if (!is_dir($this->base_directory)) {
-            throw new HandBrakeCluster_Exception_InvalidSourceDir($this->base_directory);
+            throw new HandBrakeCluster_Exception_InvalidSourceDirectory($this->base_directory);
         }
         
         // Define a queue of directories to scan, starting with the base directory,
