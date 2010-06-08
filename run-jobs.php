@@ -40,6 +40,9 @@ function gearman_created_callback($gearman_task) {
     $main = HandBrakeCluster_Main::instance();
     $log = $main->log();
 
+    $job = HandBrakeCluster_Job::fromId($gearman_task->unique());
+    $job->updateStatus(HandBrakeCluster_JobStatus::RUNNING);
+    
     $log->info("Job successfully queued with Gearman", $gearman_task->unique());
 }
 
@@ -53,13 +56,13 @@ function gearman_data_callback($gearman_task) {
 function gearman_status_callback($gearman_task) {
     $main = HandBrakeCluster_Main::instance();
     $log = $main->log();
-    
+
     $job = HandBrakeCluster_Job::fromId($gearman_task->unique());
     $status = $job->currentStatus();
     
     $rip_progress = $gearman_task->taskNumerator() / $gearman_task->taskDenominator();
     if ($rip_progress > $status->ripProgress() + 0.1) {
-        $status->updateRipProgress();
+        $status->updateRipProgress($rip_progress);
     }
 }
 
