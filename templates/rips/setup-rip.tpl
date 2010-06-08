@@ -79,9 +79,11 @@
 			    			<table class="audio-tracks">
 			    				<caption>Selected audio tracks</caption>
 			    				<thead>
-			    					<th>Track</th>
-			    					<th>Encoder</th>
-			    					<th>Name</th>
+                                    <tr>
+    			    					<th>Track</th>
+    			    					<th>Encoder</th>
+    			    					<th>Name</th>
+                                    </tr>
 			    				</thead>
 			    				<tbody>
 			    					
@@ -100,9 +102,11 @@
 			    			<table class="subtitle-tracks">
 			    				<caption>Selected subtitle tracks</caption>
 			    				<thead>
-			    					<th>Track</th>
-			    					<th>Language</th>
-			    					<th>Format</th>
+                                    <tr>
+    			    					<th>Track</th>
+    			    					<th>Language</th>
+    			    					<th>Format</th>
+                                    </tr>
 			    				</thead>
 			    				<tbody>
 			    					
