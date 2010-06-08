@@ -87,6 +87,8 @@ class HandBrakeCluster_Job {
         );
         
         self::$cache[$job->id] = $job;
+
+        return $job;
     }
 
     public static function all() {
