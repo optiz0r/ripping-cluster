@@ -17,7 +17,7 @@
                     <td><a href="{$base_uri}/job-details/id/{$job->id()}" title="View job details">{$job->name()}</a></td>
                     <td>{$job->destinationFilename()}</td>
                     <td>{$job->title()}</td>
-                    <td>{$current_status->statusName()}</td>
+                <td>{$current_status->statusName()}{if $current_status->hasProgressInfo()} ({$current_status->ripProgress()}%, <em>last updated {$current_status->mtime()|date_format:"%D %T"}</em>){/if}</td>
                 </tr>
             {/foreach}
         </tbody>
