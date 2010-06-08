@@ -188,10 +188,8 @@ class HandBrakeCluster_Job {
         // Construct the rip options
         $rip_options = array(
             'nice'            => $config->get('rips.nice', 15),
-            'input_dir'       => dirname($this->source_filename) . DIRECTORY_SEPARATOR,
-            'input_filename'  => basename($this->source_filename),
-            'output_dir'      => dirname($this->destination_filename) . DIRECTORY_SEPARATOR,
-            'output_filename' => basename($this->destination_filename),
+            'input_filename'  => dirname($this->source_filename) . DIRECTORY_SEPARATOR . basename($this->source_filename),
+            'output_filename' => dirname($this->destination_filename) . DIRECTORY_SEPARATOR . basename($this->destination_filename),
             'title'           => $this->title,
             'format'          => $this->format,
             'video_codec'     => $this->video_codec,
