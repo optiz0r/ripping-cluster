@@ -116,12 +116,11 @@ class HandBrakeCluster_Job {
         return $jobs;
     }
     
-    public static function fromPostRequest($source_id, $config) {
-        $source_filename = base64_decode(str_replace('-', '/', HandBrakeCluster_Main::issetelse($source_id, HandBrakeCluster_Exception_InvalidParameters)));
-        $source 		 = HandBrakeCluster_Rips_Source::load($source_filename);
+    public static function fromPostRequest($source_id, $global_options, $titles) {
+        $source = HandBrakeCluster_Rips_Source::loadEncoded(HandBrakeCluster_Main::issetelse($source_id, HandBrakeCluster_Exception_InvalidParameters));
 
         $jobs = array();
-        foreach ($config as $title => $details) {
+        foreach ($titles as $title => $details) {
             if (HandBrakeCluster_Main::issetelse($details['queue'])) {
                 $job = new HandBrakeCluster_Job(
                     $source,
@@ -130,11 +129,11 @@ class HandBrakeCluster_Job {
                     $source->filename(),
                     HandBrakeCluster_Main::issetelse($details['output_filename'], HandBrakeCluster_Exception_InvalidParameters),
                     $title,
-                    'mkv',   // @todo Make this configurable
-                    'x264',  // @todo Make this configurable 
-                    0,    // @todo Make this configurable
-                    0,    // @todo Make this configurable
-                    0.61,    // @todo Make this configurable
+                    $global_options['format'],
+                    $global_options['video-codec'], 
+                    $global_options['video-width'],
+                    $global_options['video-height'],
+                    $global_options['quantizer'],
                     HandBrakeCluster_Main::issetelse($details['deinterlace'], 2),
                     implode(',', HandBrakeCluster_Main::issetelse($details['audio'], array())),
                     implode(',', array_pad(array(), count($details['audio']), 'ac3')), // @todo Make this configurable

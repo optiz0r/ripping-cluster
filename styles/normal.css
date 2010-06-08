@@ -104,3 +104,10 @@ label {
     width: 16px;
 }
 
+table#setup-rips input,select {
+	
+}
+
+#quantizer-slider {
+	width: 20em;	
+}
