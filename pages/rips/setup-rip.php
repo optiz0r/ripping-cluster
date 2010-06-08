@@ -8,9 +8,9 @@ $config = $main->config();
 $encoded_filename = null;
 if ($req->get('submit')) {
     $encoded_filename = HandBrakeCluster_Main::issetelse($_POST['id'], HandBrakeCluster_Exception_InvalidParameters);
-    
+
     // Create the jobs from the request
-    $jobs = HandBrakeCluster_Job::fromPostRequest($_POST['id'], $_POST['rips']);
+    $jobs = HandBrakeCluster_Job::fromPostRequest($_POST['id'], $_POST['rip-options'], $_POST['rips']);
     
     // Spawn the background client process to run all the jobs
     HandBrakeCluster_Job::runAllJobs();

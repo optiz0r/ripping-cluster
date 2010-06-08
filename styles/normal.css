@@ -111,3 +111,8 @@ table#setup-rips input,select {
 #quantizer-slider {
 	width: 20em;	
 }
+
+select.rip-streams {
+    width: 20em;
+}
+

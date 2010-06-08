@@ -70,7 +70,7 @@
 
 						<div>		    			
 			    			<label for="rip-audio-{$title->id()}">Audio tracks</label>
-			    			<select id="rip-audio-{$title->id()}" name="rips[{$title->id()}][audio][]" size="5" multiple="multiple">
+			    			<select id="rip-audio-{$title->id()}" name="rips[{$title->id()}][audio][]" size="5" multiple="multiple" class="rip-streams">
 			    				{foreach from=$title->audioTracks() item=audio}
 			    					<option value="{$audio->id()}">{$audio->name()} - {$audio->channels()} ch ({$audio->language()}) </option>
 			    				{/foreach}
@@ -93,7 +93,7 @@
 		    		
 		    			<div>
 			    			<label for="rip-subtitle-{$title->id()}">Subtitle tracks</label>
-			    			<select id="rip-subtitle-{$title->id()}" name="rips[{$title->id()}][subtitles][]" size="5" multiple="multiple">
+			    			<select id="rip-subtitle-{$title->id()}" name="rips[{$title->id()}][subtitles][]" size="5" multiple="multiple" class="rip-streams">
 			    				{foreach from=$title->subtitleTracks() item=subtitle}
 			    					<option value="{$subtitle->id()}">{$subtitle->language()}</option>
 			    				{/foreach}
@@ -150,10 +150,10 @@
 			max: 1.0,
 			step: 0.01,
 			slide: function(event, ui) {
-				$("#output-quantizer").val(ui.value);
+				$("#global-quantizer").val(ui.value);
 			}
 		});
-		$("#output-quantizer").val($("#quantizer-slider").slider("value"));
+		$("#global-quantizer").val($("#quantizer-slider").slider("value"));
 	});
 	</script>
 	{/literal}
