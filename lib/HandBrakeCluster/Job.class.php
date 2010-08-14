@@ -52,7 +52,7 @@ class HandBrakeCluster_Job {
 
     public static function fromDatabaseRow($row) {
         return new HandBrakeCluster_Job(
-            HandBrakeCluster_Rips_Source::load($rips['source']),
+            HandBrakeCluster_Rips_Source::load($row['source']),
             $row['id'],
             $row['name'],
             $row['source'],

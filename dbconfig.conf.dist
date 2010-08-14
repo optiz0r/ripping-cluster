@@ -1,0 +1,5 @@
+hostname = localhost
+username = handbrake
+password = handbrake
+dbname   = handbrake_cluster
+

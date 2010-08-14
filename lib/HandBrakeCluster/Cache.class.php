@@ -9,8 +9,8 @@ class HandBrakeCluster_Cache {
         $this->config = $config;
         $this->cache_dir = $config->get('cache.base_dir');
         
-        if (is_dir($cache_dir)) {
-            if ( ! is_writeable($cache_dir)) {
+        if (is_dir($this->cache_dir)) {
+            if ( ! is_writeable($this->cache_dir)) {
                 throw new HandBrakeCluster_Exception_InvalidCacheDir();
             }
         } else {

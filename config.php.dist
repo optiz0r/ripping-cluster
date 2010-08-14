@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * HandBrakeCluster Library path
+ * 
+ * Specifies the absolute or relative path to the HandBrakeCluster library directory, relative to the webui root directory.
+ * Path must end with a trailing slash.
+ * 
+ * @var string
+ */
+define('HandBrakeCluster_Lib', '../lib/');
+
+/**
+ * HandBrakeCluster Database Configuration
+ * 
+ * Specifies the absolute or relative path to the HandBrakeCluster database configuration file. 
+ * This is a standard ini type file, containing the config required to connect to the database.
+ * 
+ * @var string
+ */
+define('HandBrakeCluster_DBConfig', '../dbconfig.conf');
+
+?>

@@ -18,7 +18,7 @@ class HandBrakeCluster_Main {
     private function __construct() {
         $request_string = isset($_GET['l']) ? $_GET['l'] : '';
 
-        $this->config   = new HandBrakeCluster_Config("dbconfig.conf");
+        $this->config   = new HandBrakeCluster_Config(HandBrakeCluster_DBConfig);
         $this->database = new HandBrakeCluster_Database($this->config);
         $this->config->setDatabase($this->database);
 
@@ -126,12 +126,12 @@ class HandBrakeCluster_Main {
 
         // Special case: All exceptions are stored in the same file
         if (preg_match('/^HandBrakeCluster_Exception/', $classname)) {
-            require_once('HandBrakeCluster/Exceptions.class.php');
+            require_once(HandBrakeCluster_Lib . 'HandBrakeCluster/Exceptions.class.php');
             return;
         }
 
         // Replace any underscores with directory separators
-        $filename = preg_replace('/_/', '/', $classname);
+        $filename = HandBrakeCluster_Lib . preg_replace('/_/', '/', $classname);
 
         // Tack on the class file suffix
         $filename .= '.class.php';

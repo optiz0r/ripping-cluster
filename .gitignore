@@ -2,6 +2,7 @@
 .buildpath
 .project
 .settings
-.htaccess
+/config.php
 /dbconfig.conf
-tmp/*
+/webui/.htaccess
+/webui/tmp/*
