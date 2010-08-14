@@ -6,15 +6,17 @@ class HandBrakeCluster_Log {
     
     private $database;
     private $config;
+    private $table;
 
-    public function __construct(HandBrakeCluster_Database $database, HandBrakeCluster_Config $config) {
+    public function __construct(HandBrakeCluster_Database $database, HandBrakeCluster_Config $config, $table) {
         $this->database = $database;
         $this->config = $config;
+        $this->table = $table;
 
     }
 
     public function log($severity, $message, $job_id = 0) {
-        $this->database->insert('INSERT INTO client_log (job_id,level,ctime,pid,hostname,progname,line,message) VALUES(:job_id, :level, :ctime, :pid, :hostname, :progname, :line, :message)',
+        $this->database->insert("INSERT INTO {$this->table} (job_id,level,ctime,pid,hostname,progname,line,message) VALUES(:job_id, :level, :ctime, :pid, :hostname, :progname, :line, :message)",
             array(
                 array('name' => 'job_id', 'value' => $job_id, 'type' => PDO::PARAM_INT),
                 array('name' => 'level', 'value' => $severity, 'type' => PDO::PARAM_STR),

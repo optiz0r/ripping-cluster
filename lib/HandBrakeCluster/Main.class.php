@@ -17,12 +17,23 @@ class HandBrakeCluster_Main {
 
     private function __construct() {
         $request_string = isset($_GET['l']) ? $_GET['l'] : '';
+        
+        $log_table = null;
+        switch(HBC_File) {
+            case 'index': {
+                $log_table = 'client_log';
+            } break;
+            
+            case 'worker': {
+                $log_table = 'worker_log';
+            }
+        }
 
         $this->config   = new HandBrakeCluster_Config(HandBrakeCluster_DBConfig);
         $this->database = new HandBrakeCluster_Database($this->config);
         $this->config->setDatabase($this->database);
 
-        $this->log      = new HandBrakeCluster_Log($this->database, $this->config);
+        $this->log      = new HandBrakeCluster_Log($this->database, $this->config, $log_table);
         $this->request  = new HandBrakeCluster_RequestParser($request_string);
         $this->cache    = new HandBrakeCluster_Cache($this->config);
         
