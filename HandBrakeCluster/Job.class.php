@@ -44,6 +44,12 @@ class HandBrakeCluster_Job {
         $this->subtitle_tracks          = $subtitle_tracks; 
     }
 
+    public function __clone() {
+        $this->id = null;
+
+        $this->create();
+    }
+
     public static function fromDatabaseRow($row) {
         return new HandBrakeCluster_Job(
             HandBrakeCluster_Rips_Source::load($rips['source']),
@@ -124,12 +130,14 @@ class HandBrakeCluster_Job {
         $jobs = array();
         foreach ($titles as $title => $details) {
             if (HandBrakeCluster_Main::issetelse($details['queue'])) {
+                HandBrakeCluster_Main::issetelse($details['output_filename'], HandBrakeCluster_Exception_InvalidParameters);
+
                 $job = new HandBrakeCluster_Job(
                     $source,
                     null,
                     HandBrakeCluster_Main::issetelse($details['name'], 'unnamed job'),
                     $source->filename(),
-                    HandBrakeCluster_Main::issetelse($details['output_filename'], HandBrakeCluster_Exception_InvalidParameters),
+                    $global_options['output-directory'] . DIRECTORY_SEPARATOR . $details['output_filename'],
                     $title,
                     $global_options['format'],
                     $global_options['video-codec'], 
@@ -179,6 +187,18 @@ class HandBrakeCluster_Job {
         $status = HandBrakeCluster_JobStatus::updateStatusForJob($this, HandBrakeCluster_JobStatus::CREATED);
     }
 
+    public function delete() {
+        $database = HandBrakeCluster_Main::instance()->database();
+        $database->update(
+            'DELETE FROM jobs WHERE id=:job_id LIMIT 1',
+            array(
+                array(name => 'job_id', value => $this->id, type => PDO::PARAM_INT),
+            )    
+        );
+
+        $this->id = null;
+    }
+
     public function queue($gearman) {
         $main = HandBrakeCluster_Main::instance();
         $config = $main->config();
@@ -188,8 +208,8 @@ class HandBrakeCluster_Job {
         // Construct the rip options
         $rip_options = array(
             'nice'            => $config->get('rips.nice', 15),
-            'input_filename'  => dirname($this->source_filename) . DIRECTORY_SEPARATOR . basename($this->source_filename),
-            'output_filename' => dirname($this->destination_filename) . DIRECTORY_SEPARATOR . basename($this->destination_filename),
+            'input_filename'  => $this->source_filename,
+            'output_filename' => $this->destination_filename,
             'title'           => $this->title,
             'format'          => $this->format,
             'video_codec'     => $this->video_codec,
@@ -231,6 +251,22 @@ class HandBrakeCluster_Job {
     
     public function updateStatus($new_status, $rip_progress = null) {
         return HandBrakeCluster_JobStatus::updateStatusForJob($this, $new_status, $rip_progress);
+    }
+
+    public function calculateETA() {
+        $current_status = $this->currentStatus();
+        if ($current_status->status() != HandBrakeCluster_JobStatus::RUNNING) {
+            throw new HandBrakeCluster_Exception_JobNotRunning();
+        }
+
+        $running_time = $current_status->mtime() - $current_status->ctime();
+        $progress     = $current_status->ripProgress();
+
+        if ($progress > 0) {
+            $remaining_time = round((100 - $progress) * ($running_time / $progress));
+        }
+
+        return $remaining_time;
     }
 
     public function id() {

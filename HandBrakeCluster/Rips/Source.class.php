@@ -131,7 +131,7 @@ class HandBrakeCluster_Rips_Source {
                     $title->addChapter($matches['id'], $matches['duration']);
                 } break;
 
-                case $title && $mode == self::PM_AUDIO && preg_match('/^    \+ (?P<id>\d+), (?P<name>.+) \((?P<format>.+)\) \((?P<channels>.+) ch\) \((?P<language>.+)\), (?P<samplerate>\d+)Hz, (?P<bitrate>\d+)bps$/', $line, $matches): {
+                case $title && $mode == self::PM_AUDIO && preg_match('/^    \+ (?P<id>\d+), (?P<name>.+) \((?P<format>.+)\) \((?P<channels>(.+ ch|Dolby Surround))\) \((?P<language>.+)\), (?P<samplerate>\d+)Hz, (?P<bitrate>\d+)bps$/', $line, $matches): {
                     $title->addAudioTrack(
                         new HandBrakeCluster_Rips_SourceAudioTrack(
                             $matches['id'], $matches['name'], $matches['format'], $matches['channels'],
@@ -196,7 +196,27 @@ class HandBrakeCluster_Rips_Source {
 	    }
 	    
 	    return $longest_title;
-	}
+    }
+
+    public function longestTitleIndex() {
+        $longest_index = null;
+        $maximmum_duration = 0;
+
+        if ( ! $this->titles) {
+            return null;
+        }
+
+        for ($i = 0, $l = count($this->titles); $i < $l; ++$i) {
+            $title = $this->titles[$i];
+            $duration = $title->durationInSeconds();
+            if ($duration > $maximum_duration) {
+                $longest_index = $i;
+                $maximum_duration = $duration;
+            }
+        }
+
+        return $longest_index;
+    }
 	
     public function filename() {
         return $this->source;

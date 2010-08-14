@@ -72,12 +72,16 @@ class HandBrakeCluster_RequestParser {
         return join('/', $this->page);
     }
 
+    public function exists($key) {
+        return isset($this->vars[$key]);
+    }
+
     public function get($key, $default = null) {
         if (isset($this->vars[$key])) {
             return $this->vars[$key];
         }
         
-        if (is_subclass_of($default, HandBrakeCluster_Exception)) {
+        if (is_string($default) && preg_match('/^HandBrakeCluster_Exception/', $default) && class_exists($default) && is_subclass_of($default, HandBrakeCluster_Exception)) {
             throw new $default();
         }
 

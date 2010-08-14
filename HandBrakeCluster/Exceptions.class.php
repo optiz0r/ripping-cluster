@@ -24,4 +24,7 @@ class HandBrakeCluster_Exception_CacheException         extends HandBrakeCluster
 class HandBrakeCluster_Exception_InvalidCacheDir        extends HandBrakeCluster_Exception_CacheException {};
 class HandBrakeCluster_Exception_CacheObjectNotFound    extends HandBrakeCluster_Exception_CacheException {};
 
+class HandBrakeCluster_Exception_LogicException         extends HandBrakeCluster_Exception {};
+class HandBrakeCluster_Exception_JobNotRunning          extends HandBrakeCluster_Exception_LogicException {};
+
 ?>

@@ -104,8 +104,8 @@ label {
     width: 16px;
 }
 
-table#setup-rips input,select {
-	
+form#setup-rips input[type="text"] {
+	width: 30em;
 }
 
 #quantizer-slider {

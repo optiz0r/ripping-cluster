@@ -29,6 +29,7 @@ if ($req->get('submit')) {
     $this->smarty->assign('source', $source);
     $this->smarty->assign('titles', $source->titles());
     $this->smarty->assign('longest_title', $source->longestTitle());
+    $this->smarty->assign('default_output_directory', $config->get('rips.default.output_directory'));
 }
 
 ?>

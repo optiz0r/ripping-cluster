@@ -8,15 +8,17 @@
 		to see a list of running jobs, or the <a href="{$base_uri}logs/" title="View logs">logs</a> page for more detailed progress information.
 	</p>
 {else}
+    <h3>{$source->filename()|htmlspecialchars}</h3>
+			
 	<form name="setup-rips" id="setup-rips" action="{$base_uri}rips/setup-rip/submit/" method="post">
 		<fieldset>
 			<legend>Configure global rip options</legend>
-			
+
 			<input type="hidden" name="id" value="{$source->filenameEncoded()|escape:"html"}" />
 	
 			<div>
 				<label for="global-output-directory">Output directory</label>
-				<input type="text" id="global-ouput-directory" name="rip-options[output-directory]" value="{$default_output_dir}" />
+				<input type="text" id="global-ouput-directory" name="rip-options[output-directory]" value="{$default_output_directory}" />
 			</div>
 			
 			<div>
@@ -58,7 +60,7 @@
 			
 		<div id="available-titles">
 			{foreach from=$titles item=title}
-		   	 	<h3><a href="#">Title {$title->id()} (Duration: {$title->duration()}, Chapters: {$title->chapterCount()})</a></h3>
+		   	 	<h3 id="configure-rip-{$title->id()}"><a href="#">Title {$title->id()} (Duration: {$title->duration()}, Chapters: {$title->chapterCount()})</a></h3>
 		    	<div id="rips-{$title->id()}">
 		    		<fieldset>
 		    			<legend>Configure title rip options</legend>
@@ -68,11 +70,16 @@
 		    				<input type="checkbox" id="rip-title-{$title->id()}" name="rips[{$title->id()}][queue]" value="1" />
 		    			</div>
 
+                        <div>
+                            <label for="rip-name-{$title->id()}">Short Name</label>
+                            <input type="text" id="rip-name-{$title->id()}" name="rips[{$title->id()}][name]" value="" />
+                        </div>
+
 						<div>		    			
 			    			<label for="rip-audio-{$title->id()}">Audio tracks</label>
 			    			<select id="rip-audio-{$title->id()}" name="rips[{$title->id()}][audio][]" size="5" multiple="multiple" class="rip-streams">
 			    				{foreach from=$title->audioTracks() item=audio}
-			    					<option value="{$audio->id()}">{$audio->name()} - {$audio->channels()} ch ({$audio->language()}) </option>
+			    					<option value="{$audio->id()}">{$audio->name()} - {$audio->channels()} ({$audio->language()}) </option>
 			    				{/foreach}
 			    			</select>
 			    			
@@ -142,7 +149,7 @@
 	{literal}
 	<script language="javascript">
 	$(function() {
-		$("#available-titles").accordion();
+		$("#available-titles").accordion({active: {/literal}{$source->longestTitleIndex()}{literal}});
 		$("input:submit").button();
 		$("#quantizer-slider").slider({
 			value:0.61,

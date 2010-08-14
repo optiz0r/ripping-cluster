@@ -32,6 +32,8 @@ class HandBrakeCluster_Main {
         $this->smarty->cache_dir    = './tmp/cache';
         $this->smarty->config_fir   = './config';
 
+        $this->smarty->register_modifier('formatDuration', array('HandBrakeCluster_Main', 'formatDuration'));
+
         $this->smarty->assign('version', '0.1');
         
         $this->base_uri = dirname($_SERVER['SCRIPT_NAME']) . '/';
@@ -160,11 +162,38 @@ class HandBrakeCluster_Main {
             return $var;
         }
         
-        if (preg_match('/^HandBrakeCluster_Exception/', $default) && class_exists($default) && is_subclass_of($default, HandBrakeCluster_Exception)) {
+        if (is_string($default) && preg_match('/^HandBrakeCluster_Exception/', $default) && class_exists($default) && is_subclass_of($default, HandBrakeCluster_Exception)) {
             throw new $default();
         }
         
         return $default;
+    }
+
+    public static function formatDuration($time) {
+        if (is_null($time)) {
+            return 'unknown';
+        }
+
+        $labels = array('seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years');
+        $limits = array(60, 3600, 86400, 604800, 2592000, 31556926, PHP_INT_MAX);
+
+        $working_time = $time;
+
+        $result = "";
+        $ptr = count($labels) - 1;
+
+        while ($ptr >= 0 && $working_time < $limits[$ptr]) {
+            --$ptr;
+        }
+
+        while ($ptr >= 0) {
+            $unit_time = floor($working_time / $limits[$ptr]);
+            $working_time -= $unit_time * $limits[$ptr];
+            $result = $result . ' ' . $unit_time . ' ' . $labels[$ptr];
+            --$ptr;
+        }
+
+        return $result;
     }
     
 }
