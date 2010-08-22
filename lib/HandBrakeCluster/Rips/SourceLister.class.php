@@ -16,34 +16,9 @@ class HandBrakeCluster_Rips_SourceLister {
             throw new HandBrakeCluster_Exception_InvalidSourceDirectory($this->base_directory);
         }
         
-        // Define a queue of directories to scan, starting with the base directory,
-        // and keep going until they have all been scanned
-        $scan_directories = array($this->base_directory);
-        while ($scan_directories) {
-            $dir = dir(array_shift($scan_directories));
-            
-            while (($entry = $dir->read()) !== false) {
-                if ($entry == '.' || $entry == '..' || $entry == 'lost+found') {
-                    continue;
-                }
-                
-                // Skip any non-directories
-                $source = $dir->path . DIRECTORY_SEPARATOR . $entry;
-                if (!is_dir($source)) {
-                    continue;
-                }
-                
-                // Accept this dir as a source if it contains a VIDEO_TS dir,
-                // otherwise add the dir to the queue to scan deeper
-                $source_vts = $source . DIRECTORY_SEPARATOR . 'VIDEO_TS';
-                if (is_dir($source_vts)) {
-                    $this->sources[] = HandBrakeCluster_Rips_Source::load($source_vts, false);
-                } else {
-                    $scan_directories[] = $source;
-                }
-            }
-            
-            $dir->close();
+        $iterator = new HandBrakeCluster_Utility_DvdDirectoryIterator(new HandBrakeCluster_Utility_VisibleFilesIterator(new DirectoryIterator($this->base_directory)));
+        foreach ($iterator as /** @var SplFileInfo */ $source_vts) {
+            $this->sources[] = HandBrakeCluster_Rips_Source::load($source_vts->getPathname(), false);
         }
     }
     
