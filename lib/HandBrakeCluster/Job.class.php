@@ -52,7 +52,7 @@ class HandBrakeCluster_Job {
 
     public static function fromDatabaseRow($row) {
         return new HandBrakeCluster_Job(
-            HandBrakeCluster_Rips_Source::load($row['source']),
+            HandBrakeCluster_Rips_Source::load($row['source'], false),
             $row['id'],
             $row['name'],
             $row['source'],
@@ -101,7 +101,7 @@ class HandBrakeCluster_Job {
         $jobs = array();
 
         $database = HandBrakeCluster_Main::instance()->database();
-        foreach ($database->selectList('SELECT * FROM jobs') as $row) {
+        foreach ($database->selectList('SELECT * FROM jobs WHERE id > 0') as $row) {
             $job = self::fromDatabaseRow($row);
             
             self::$cache[$job->id] = $job;
@@ -111,13 +111,21 @@ class HandBrakeCluster_Job {
         return $jobs;
     }
 
-    public static function allWithStatus($status) {
+    public static function allWithStatus($status, $limit = null) {
         $jobs = array();
-        
         $database = HandBrakeCluster_Main::instance()->database();
-        foreach ($database->selectList('SELECT * FROM jobs WHERE id IN (SELECT job_id FROM job_status_current WHERE status=:status)', array(
-                array('name' => 'status', 'value' => $status, 'type' => PDO::PARAM_INT)
-            )) as $row) {
+        
+        $params = array(
+            array('name' => 'status', 'value' => $status, 'type' => PDO::PARAM_INT),        
+        );
+        
+        $limitSql = '';
+        if ($limit) {
+            $limitSql = 'LIMIT :limit';
+            $params[] = array('name' => 'limit',  'value' => $limit,  'type' => PDO::PARAM_INT);
+        }
+        
+        foreach ($database->selectList("SELECT * FROM jobs WHERE id IN (SELECT job_id FROM job_status_current WHERE id > 0 AND status=:status) ORDER BY id {$limitSql}", $params) as $row) {
             $jobs[] = self::fromDatabaseRow($row);
         }
 
