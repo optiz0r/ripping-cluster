@@ -1,6 +1,6 @@
 <?php
 
-define('HBCFile', 'index');
+define('HBC_File', 'index');
 
 require '_inc.php';
 
