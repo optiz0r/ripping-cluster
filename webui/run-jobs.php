@@ -1,6 +1,10 @@
 <?php
 
-require 'HandBrakeCluster/Main.class.php';
+define('HBC_File', 'run-jobs');
+
+require_once '../config.php';
+require_once HandBrakeCluster_Lib . 'HandBrakeCluster/Main.class.php';
+
 try {
     $main = HandBrakeCluster_Main::instance();
     $config = $main->config();
