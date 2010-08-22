@@ -77,11 +77,11 @@ class HandBrakeCluster_JobStatus {
         	(id, job_id, status, ctime, mtime, rip_progress)
         	VALUES(NULL,:job_id,:status,:ctime,:mtime,:rip_progress)',
             array(
-                array(name => 'job_id',       value => $this->job_id,       type => PDO::PARAM_INT),
-                array(name => 'status',       value => $this->status,       type => PDO::PARAM_INT),
-                array(name => 'ctime',        value => $this->ctime,        type => PDO::PARAM_INT),
-                array(name => 'mtime',        value => $this->mtime,        type => PDO::PARAM_INT),
-                array(name => 'rip_progress', value => $this->rip_progress),
+                array('name' => 'job_id',       'value' => $this->job_id,       'type' => PDO::PARAM_INT),
+                array('name' => 'status',       'value' => $this->status,       'type' => PDO::PARAM_INT),
+                array('name' => 'ctime',        'value' => $this->ctime,        'type' => PDO::PARAM_INT),
+                array('name' => 'mtime',        'value' => $this->mtime,        'type' => PDO::PARAM_INT),
+                array('name' => 'rip_progress', 'value' => $this->rip_progress),
             )
         );
         
@@ -95,12 +95,12 @@ class HandBrakeCluster_JobStatus {
         	job_id=:job_id, status=:status, ctime=:ctime, mtime=:mtime, rip_progress=:rip_progress
         	WHERE id=:id',
             array(
-                array(name => 'id',           value => $this->id,           type => PDO::PARAM_INT),
-                array(name => 'job_id',       value => $this->job_id,       type => PDO::PARAM_INT),
-                array(name => 'status',       value => $this->status,       type => PDO::PARAM_INT),
-                array(name => 'ctime',        value => $this->ctime,        type => PDO::PARAM_INT),
-                array(name => 'mtime',        value => $this->mtime,        type => PDO::PARAM_INT),
-                array(name => 'rip_progress', value => $this->rip_progress),
+                array('name' => 'id',           'value' => $this->id,           'type' => PDO::PARAM_INT),
+                array('name' => 'job_id',       'value' => $this->job_id,       'type' => PDO::PARAM_INT),
+                array('name' => 'status',       'value' => $this->status,       'type' => PDO::PARAM_INT),
+                array('name' => 'ctime',        'value' => $this->ctime,        'type' => PDO::PARAM_INT),
+                array('name' => 'mtime',        'value' => $this->mtime,        'type' => PDO::PARAM_INT),
+                array('name' => 'rip_progress', 'value' => $this->rip_progress),
             )
         );
     }
