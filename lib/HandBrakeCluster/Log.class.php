@@ -28,6 +28,10 @@ class HandBrakeCluster_Log {
                 array('name' => 'message', 'value' => $message, 'type' => PDO::PARAM_STR)
             )
         );
+        
+        if (HBC_File == 'worker') {
+            echo date("r") . ' ' . $message . "\n"; 
+        }
     }
 
     public function debug($message, $job_id = 0) {

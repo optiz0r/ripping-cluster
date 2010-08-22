@@ -6,6 +6,9 @@ require_once '../config.php';
 require_once HandBrakeCluster_Lib . 'HandBrakeCluster/Main.class.php';
 
 try {
+    
+    set_time_limit(0);
+    
     $main = HandBrakeCluster_Main::instance();
     $smarty = $main->smarty();
 
