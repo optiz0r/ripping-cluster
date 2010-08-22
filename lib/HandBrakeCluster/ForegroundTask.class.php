@@ -35,11 +35,11 @@ class HandBrakeCluster_ForegroundTask {
         );
         
         $pipes = array();
-        $process = proc_open($handbrake_cmd, $descriptors, $pipes);
+        $process = proc_open($command, $descriptors, $pipes);
         
-        stream_set_blocking($pipes[0], 0); // Make stdin/stdout/stderr non-blocking
-        stream_set_blocking($pipes[1], 0);
-        stream_set_blocking($pipes[2], 0);
+        stream_set_blocking($pipes[self::PIPE_STDIN], 0); // Make stdin/stdout/stderr non-blocking
+        stream_set_blocking($pipes[self::PIPE_STDOUT], 0);
+        stream_set_blocking($pipes[self::PIPE_STDERR], 0);
         
         if ($txLen == 0) {
             fclose($pipes[0]);
@@ -48,45 +48,45 @@ class HandBrakeCluster_ForegroundTask {
         while (true) {
             $rx = array(); // The program's stdout/stderr
             if (!$stdoutDone) {
-                $rx[] = $pipes[1];
+                $rx[] = $pipes[self::PIPE_STDOUT];
             }
             if (!$stderrDone) {
-                $rx[] = $pipes[2];
+                $rx[] = $pipes[self::PIPE_STDERR];
             }
             
             $tx = array(); // The program's stdin
             if ($txOff < $txLen) {
-                $tx[] = $pipes[0];
+                $tx[] = $pipes[self::PIPE_STDIN];
             }
             
             stream_select($rx, $tx, $ex = null, null, null); // Block til r/w possible
             if (!empty($tx)) {
-                $txRet = fwrite($pipes[0], substr($stdin, $txOff, 8192));
+                $txRet = fwrite($pipes[self::PIPE_STDIN], substr($stdin, $txOff, 8192));
                 if ($txRet !== false) {
                     $txOff += $txRet;
                 }
                 if ($txOff >= $txLen) {
-                    fclose($pipes[0]);
+                    fclose($pipes[self::PIPE_STDIN]);
                 }
             }
             
             foreach ($rx as $r) {
-                if ($r == $pipes[1]) {
-                    $chunk = fread($pipes[1], 8192);
-                    if (feof($pipes[1])) { 
-                        fclose($pipes[1]); $stdoutDone = true;
+                if ($r == $pipes[self::PIPE_STDOUT]) {
+                    $chunk = fread($pipes[self::PIPE_STDOUT], 8192);
+                    if (feof($pipes[self::PIPE_STDOUT])) { 
+                        fclose($pipes[self::PIPE_STDOUT]); $stdoutDone = true;
                     }
                     
-                    if ($callback_stderr) {
+                    if ($callback_stdout) {
                         call_user_func($callback_stdout, $identifier, $chunk);
                     } else {
                         $stdout .= $chunk;
                     }
                     
-                } else if ($r == $pipes[2]) {
-                    $chunk = fread($pipes[2], 8192);
-                    if (feof($pipes[2])) {
-                        fclose($pipes[2]); $stderrDone = true;
+                } else if ($r == $pipes[self::PIPE_STDERR]) {
+                    $chunk = fread($pipes[self::PIPE_STDERR], 8192);
+                    if (feof($pipes[self::PIPE_STDERR])) {
+                        fclose($pipes[self::PIPE_STDERR]); $stderrDone = true;
                     }
                     
                     if ($callback_stderr) {
