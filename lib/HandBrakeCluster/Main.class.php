@@ -20,7 +20,8 @@ class HandBrakeCluster_Main {
         
         $log_table = null;
         switch(HBC_File) {
-            case 'index': {
+            case 'index': 
+            case 'run-jobs': {
                 $log_table = 'client_log';
             } break;
             
