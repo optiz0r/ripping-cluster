@@ -48,7 +48,8 @@ class HandBrakeCluster_Rips_Source {
         }
         
         $config = HandBrakeCluster_Main::instance()->config();
-        $real_source_basedir = realpath($config->get('rips.source_dir'));
+        $source_basedir = $config->get('rips.source_dir');
+        $real_source_basedir = realpath($source_basedir);
         if (substr($real_source_filename, 0, strlen($real_source_basedir)) != $real_source_basedir) {
             throw new HandBrakeCluster_Exception_InvalidSourceDirectory($source_filename);
         }
@@ -59,21 +60,10 @@ class HandBrakeCluster_Rips_Source {
     protected function scan() {
         $source_shell = escapeshellarg($this->source);
         $handbrake_cmd = "HandBrakeCLI -i {$source_shell} -t 0";
-
-        $handbrake_pid = proc_open($handbrake_cmd, array(
-        0 => array("pipe", "r"),
-        1 => array("pipe", "w"),
-        2 => array("pipe", "w")
-        ), $pipes);
-
-        $handbrake_output = stream_get_contents($pipes[2]);
-        fclose($pipes[0]);
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-        proc_close($handbrake_pid);
-
+        list($retval, $handbrake_output, $handbrake_error) = HandBrakeCluster_ForegroundTask::execute($handbrake_cmd);
+        
         // Process the output
-        $lines = explode("\n", $handbrake_output);
+        $lines = explode("\n", $handbrake_error);
         $title = null;
         $mode = self::PM_TITLE;
 
