@@ -2,6 +2,8 @@
 
 class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IPlugin {
 
+    const PLUGIN_NAME = 'HandBrake';
+    
     const DEINTERLACE_ALWAYS      = 1;
     const DEINTERLACE_SELECTIVELY = 2;
     
@@ -24,7 +26,11 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
     }
     
     public static function init() {
-        
+        // Nothing to do
+    }
+    
+    public static function name() {
+        return self::PLUGIN_NAME;
     }
     
     public static function workerFunctions() {
