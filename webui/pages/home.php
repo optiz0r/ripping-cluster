@@ -1,8 +1,8 @@
 <?php
 
-    $running_jobs   = HandBrakeCluster_Job::allWithStatus(HandBrakeCluster_JobStatus::RUNNING, 5);
-    $completed_jobs = HandBrakeCluster_Job::allWithStatus(HandBrakeCluster_JobStatus::COMPLETE, 5);
-    $failed_jobs    = HandBrakeCluster_Job::allWithStatus(HandBrakeCluster_JobStatus::FAILED, 5);
+    $running_jobs   = RippingCluster_Job::allWithStatus(RippingCluster_JobStatus::RUNNING, 5);
+    $completed_jobs = RippingCluster_Job::allWithStatus(RippingCluster_JobStatus::COMPLETE, 5);
+    $failed_jobs    = RippingCluster_Job::allWithStatus(RippingCluster_JobStatus::FAILED, 5);
 
     $this->smarty->assign('running_jobs', $running_jobs);
     $this->smarty->assign('completed_jobs', $completed_jobs);

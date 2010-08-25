@@ -5,15 +5,15 @@ define('HBC_File', 'index');
 require '_inc.php';
 
 try {
-    $main = HandBrakeCluster_Main::instance();
+    $main = RippingCluster_Main::instance();
     $smarty = $main->smarty();
     
-    $page = new HandBrakeCluster_Page($smarty, $main->request());
+    $page = new RippingCluster_Page($smarty, $main->request());
     if ($page->evaluate()) {
         $smarty->display('index.tpl');
     }
     
-} catch (HandBrakeCluster_Exception $e) {
+} catch (RippingCluster_Exception $e) {
     die("Uncaught Exception: " . $e->getMessage());
 }
 

@@ -3,19 +3,19 @@
 define('HBC_File', 'worker');
 
 require_once '../config.php';
-require_once HandBrakeCluster_Lib . 'HandBrakeCluster/Main.class.php';
+require_once RippingCluster_Lib . 'RippingCluster/Main.class.php';
 
 try {
     
     set_time_limit(0);
     
-    $main = HandBrakeCluster_Main::instance();
+    $main = RippingCluster_Main::instance();
     $smarty = $main->smarty();
 
-    $worker = new HandBrakeCluster_Worker();
+    $worker = new RippingCluster_Worker();
     $worker->start();
     
-} catch (HandBrakeCluster_Exception $e) {
+} catch (RippingCluster_Exception $e) {
     die("Uncaught Exception: " . $e->getMessage());
 }
 

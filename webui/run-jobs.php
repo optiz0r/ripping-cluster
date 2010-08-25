@@ -3,10 +3,10 @@
 define('HBC_File', 'run-jobs');
 
 require_once '../config.php';
-require_once HandBrakeCluster_Lib . 'HandBrakeCluster/Main.class.php';
+require_once RippingCluster_Lib . 'RippingCluster/Main.class.php';
 
 try {
-    $main = HandBrakeCluster_Main::instance();
+    $main = RippingCluster_Main::instance();
     $config = $main->config();
     $log = $main->log();
     
@@ -19,7 +19,7 @@ try {
     $gearman->setFailCallback("gearman_fail_callback");
     
     // Retrieve a list of Created jobs
-    $jobs = HandBrakeCluster_Job::allWithStatus(HandBrakeCluster_JobStatus::CREATED);
+    $jobs = RippingCluster_Job::allWithStatus(RippingCluster_JobStatus::CREATED);
     
     foreach ($jobs as $job) {
         // Enqueue the job using gearman
@@ -35,33 +35,33 @@ try {
     
     $log->info("Job queue completed");
     
-} catch (HandBrakeCluster_Exception $e) {
+} catch (RippingCluster_Exception $e) {
     die("Uncaught Exception (" . get_class($e) . "): " . $e->getMessage() . "\n");
 }
 
 
 function gearman_created_callback($gearman_task) {
-    $main = HandBrakeCluster_Main::instance();
+    $main = RippingCluster_Main::instance();
     $log = $main->log();
 
-    $job = HandBrakeCluster_Job::fromId($gearman_task->unique());
-    $job->updateStatus(HandBrakeCluster_JobStatus::RUNNING);
+    $job = RippingCluster_Job::fromId($gearman_task->unique());
+    $job->updateStatus(RippingCluster_JobStatus::RUNNING);
     
     $log->info("Job successfully queued with Gearman", $gearman_task->unique());
 }
 
 function gearman_data_callback($gearman_task) {
-    $main = HandBrakeCluster_Main::instance();
+    $main = RippingCluster_Main::instance();
     $log = $main->log();
     
     $log->debug("Got some data from gearman", $gearman_task->unique());
 }
 
 function gearman_status_callback($gearman_task) {
-    $main = HandBrakeCluster_Main::instance();
+    $main = RippingCluster_Main::instance();
     $log = $main->log();
 
-    $job = HandBrakeCluster_Job::fromId($gearman_task->unique());
+    $job = RippingCluster_Job::fromId($gearman_task->unique());
     $status = $job->currentStatus();
     
     $rip_progress = $gearman_task->taskNumerator() / $gearman_task->taskDenominator();
@@ -71,21 +71,21 @@ function gearman_status_callback($gearman_task) {
 }
 
 function gearman_complete_callback($gearman_task) {
-    $main = HandBrakeCluster_Main::instance();
+    $main = RippingCluster_Main::instance();
     $log = $main->log();
     
-    $job = HandBrakeCluster_Job::fromId($gearman_task->unique());
-    $job->updateStatus(HandBrakeCluster_JobStatus::COMPLETE);
+    $job = RippingCluster_Job::fromId($gearman_task->unique());
+    $job->updateStatus(RippingCluster_JobStatus::COMPLETE);
     
     $log->info("Job Complete", $job->id());
 }
 
 function gearman_fail_callback($gearman_task) {
-    $main = HandBrakeCluster_Main::instance();
+    $main = RippingCluster_Main::instance();
     $log = $main->log();
     
-    $job = HandBrakeCluster_Job::fromId($gearman_task->unique());
-    $job->updateStatus(HandBrakeCluster_JobStatus::FAILED);
+    $job = RippingCluster_Job::fromId($gearman_task->unique());
+    $job->updateStatus(RippingCluster_JobStatus::FAILED);
     
     $log->info("Job Failed", $job->id());
 }

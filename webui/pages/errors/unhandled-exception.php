@@ -1,6 +1,6 @@
 <?php
 
-$main   = HandBrakeCluster_Main::instance();
+$main   = RippingCluster_Main::instance();
 $config = $main->config();
 
 $this->smarty->assign('display_exceptions', $config->get('debug.display_exceptions'));

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <title>HandBrake Cluster WebUI</title>
+        <title>Ripping Cluster WebUI</title>
         <script lang="javascript">
         </script>
         <link rel="stylesheet" type="text/css" href="{$base_uri}styles/normal.css" />
@@ -15,7 +15,7 @@
         <div id="container">
 
             <div id="banner">
-                <h1>HandBrake Cluster WebUI</h1>
+                <h1>Ripping Cluster WebUI</h1>
             </div>
 
             <div id="navigation">
@@ -45,7 +45,7 @@
             </div>
 
             <div id="footer">
-                Powered by HandBrakeCluster WebUI {$version}. Written by Ben Roberts.
+                Powered by RippingCluster WebUI {$version}. Written by Ben Roberts.
             </div>
 
         </div>

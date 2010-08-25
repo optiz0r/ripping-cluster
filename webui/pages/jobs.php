@@ -1,11 +1,11 @@
 <?php
 
-$main   = HandBrakeCluster_Main::instance();
+$main   = RippingCluster_Main::instance();
 $req    = $main->request();
 $config = $main->config();
 
 if ($req->get('submit')) {
-    $action =  HandBrakeCluster_Main::issetelse($_POST['action'], HandBrakeCluster_Exception_InvalidParameters);
+    $action =  RippingCluster_Main::issetelse($_POST['action'], RippingCluster_Exception_InvalidParameters);
 
     # If a bulk action was selected, the action will be a single term, otherwise it will also contain
     # the id of the single item to act upon. Work out which was used now.
@@ -20,9 +20,9 @@ if ($req->get('submit')) {
 
     $jobs = array();
     foreach ($job_ids as $job_id) {
-        $job = HandBrakeCluster_Job::fromId($job_id);
+        $job = RippingCluster_Job::fromId($job_id);
         if (!$job) {
-            throw new HandBrakeCluster_Exception_InvalidParameters('job_id');
+            throw new RippingCluster_Exception_InvalidParameters('job_id');
         }
         $jobs[] = $job;
     }
@@ -30,7 +30,7 @@ if ($req->get('submit')) {
     switch ($action) {
         case 'mark-failed': {
             foreach ($jobs as $job) {
-                $job->updateStatus(HandBrakeCluster_JobStatus::FAILED);
+                $job->updateStatus(RippingCluster_JobStatus::FAILED);
             }
         } break;
 
@@ -41,10 +41,10 @@ if ($req->get('submit')) {
             }
 
             # Dispatch all the jobs in one run
-            HandBrakeCluster_Job::runAllJobs();
+            RippingCluster_Job::runAllJobs();
 
             # Redirect to the job queued page to show the jobs were successfully dispatched
-            HandBrakeCluster_Page::redirect('rips/setup-rip/queued');
+            RippingCluster_Page::redirect('rips/setup-rip/queued');
         } break;
 
         case 'delete': {
@@ -54,34 +54,34 @@ if ($req->get('submit')) {
         } break;
 
         default: {
-            throw new HandBrakeCluster_Exception_InvalidParameters('action');
+            throw new RippingCluster_Exception_InvalidParameters('action');
         }
     }
 
-    HandBrakeCluster_Page::redirect('jobs');
+    RippingCluster_Page::redirect('jobs');
 
 } else {
 
     if (isset($_POST['view'])) {
         $statusName = urlencode($_POST['view']);
-        HandBrakeCluster_Page::redirect("jobs/view/{$statusName}");
+        RippingCluster_Page::redirect("jobs/view/{$statusName}");
     }
 
     $statusName = $req->get('view', 'any');
     switch ($statusName) {
         case 'any':      $status = null; break;
-        case 'queued':   $status = HandBrakeCluster_JobStatus::QUEUED; break;
-        case 'running':  $status = HandBrakeCluster_JobStatus::RUNNING; break;
-        case 'complete': $status = HandBrakeCluster_JobStatus::COMPLETE; break;
-        case 'failed':   $status = HandBrakeCluster_JobStatus::FAILED; break;
-        default: throw new HandBrakeCluster_Exception_InvalidParameters('view');
+        case 'queued':   $status = RippingCluster_JobStatus::QUEUED; break;
+        case 'running':  $status = RippingCluster_JobStatus::RUNNING; break;
+        case 'complete': $status = RippingCluster_JobStatus::COMPLETE; break;
+        case 'failed':   $status = RippingCluster_JobStatus::FAILED; break;
+        default: throw new RippingCluster_Exception_InvalidParameters('view');
     } 
 
     $jobs = array();
     if ($status) {
-        $jobs = HandBrakeCluster_Job::allWithStatus($status);
+        $jobs = RippingCluster_Job::allWithStatus($status);
     } else {
-        $jobs = HandBrakeCluster_Job::all();
+        $jobs = RippingCluster_Job::all();
     }
 
     $this->smarty->assign('jobs', $jobs);
