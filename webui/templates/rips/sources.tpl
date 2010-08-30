@@ -10,11 +10,12 @@
 	</p>
 	<ul>
 		{foreach from=$sources item=source}
+			{assign var='source_plugin' value=$source->plugin()}
 			{assign var='source_filename' value=$source->filename()}
 			{assign var='source_filename_encoded' value=$source->filenameEncoded()}
 			<li>
-				[ <a href="{$base_uri}rips/source-details/id/{$source_filename_encoded}" title="Browse source details">Browse</a> |
-				  <a href="{$base_uri}rips/setup-rip/id/{$source_filename_encoded}" title="Rip this source">Rip</a> ]
+				[ <a href="{$base_uri}rips/source-details/plugin/{$source_plugin}/id/{$source_filename_encoded}" title="Browse source details">Browse</a> |
+				  <a href="{$base_uri}rips/setup-rip/plugin/{$source_plugin}/id/{$source_filename_encoded}" title="Rip this source">Rip</a> ]
 				{$source_filename|escape:'html'}{if $sources_cached.$source_filename} (cached){/if}
 			</li>
 		{/foreach}

@@ -8,9 +8,10 @@
 		to see a list of running jobs, or the <a href="{$base_uri}logs/" title="View logs">logs</a> page for more detailed progress information.
 	</p>
 {else}
-    <h3>{$source->filename()|htmlspecialchars}</h3>
+    <h3>{$source->filename()|escape:"html"}</h3>
 			
 	<form name="setup-rips" id="setup-rips" action="{$base_uri}rips/setup-rip/submit/" method="post">
+		<input type="hidden" name="plugin" value="{$source->plugin()|escape:"html"}" />
 		<fieldset>
 			<legend>Configure global rip options</legend>
 

@@ -3,12 +3,11 @@
 $main = RippingCluster_Main::instance();
 $config = $main->config();
 
-$lister = new RippingCluster_Rips_SourceLister($config->get('rips.source_dir'));
-$sources = $lister->sources();
+$sources = RippingCluster_Source_PluginFactory::enumerateAll();
 
 $sources_cached = array();
 foreach ($sources as $source) {
-    $sources_cached[$source->filename()] = RippingCluster_Rips_Source::isCached($source->filename());
+    $sources_cached[$source->filename()] = RippingCluster_Source::isCached($source->filename());
 }
 
 $this->smarty->assign('sources', $sources);
