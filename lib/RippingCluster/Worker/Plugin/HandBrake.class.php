@@ -7,8 +7,7 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
     const DEINTERLACE_ALWAYS      = 1;
     const DEINTERLACE_SELECTIVELY = 2;
     
-    private $stdout;
-    private $stderr;
+    private $output;
     
     private $job;
     
@@ -16,8 +15,7 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
     private $rip_options;
     
     private function __construct(GearmanJob $job) {
-        $this->stdout = '';
-        $this->stderr = '';
+        $this->output = '';
         
         $this->job = $job;
         
@@ -45,7 +43,9 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
     }
         
     public function execute() {
-        $config = RippingCluster_Main::instance()->config();
+        $main   = RippingCluster_Main::instance();
+        $config = $main->config();
+        $log    = $main->log();
         
         $handbrake_cmd_raw = array(
             '-n', $config->get('rips.nice'),
@@ -70,9 +70,12 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
             $handbrake_cmd[] = escapeshellarg($value);
         }
         $handbrake_cmd = join(' ', $handbrake_cmd);
+        $log->debug($handbrake_cmd);
 
-        return RippingCluster_ForegroundTask::execute($handbrake_cmd, null, null, null, array($this, 'callbackStdout'), array($this, 'callbackStderr'), $this);
-
+        $return_val = RippingCluster_ForegroundTask::execute($handbrake_cmd, null, null, null, array($this, 'callbackOutput'), array($this, 'callbackOutput'), $this);
+        if ($return_val) {
+            $this->job->setFail($return_val);
+        }
     }
     
     public function evaluateOption($name, $option = null) {
@@ -101,24 +104,12 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
         } 
     }
     
-    public function callbackStdout($rip, $data) {
-		$this->stdout .= $data;
-        
-        while (count($lines = preg_split('/[\r\n]+/', $this->stdout, 2)) > 1) {
-            $line = $lines[0];
-            $this->stdout = $lines[1];
-            
-            $log = RippingCluster_Main::instance()->log();
-            $log->info($line);
-        }
-    }
-    
-    public function callbackStderr($rip, $data) {
-		$this->stderr .= $data;
+    public function callbackOutput($rip, $data) {
+		$this->output .= $data;
 
-        while (count($lines = preg_split('/[\r\n]+/', $this->stderr, 2)) > 1) {
+        while (count($lines = preg_split('/[\r\n]+/', $this->output, 2)) > 1) {
             $line = $lines[0];
-            $rip->stderr = $lines[1];
+            $rip->output = $lines[1];
             
             $matches = array();
             if (preg_match('/Encoding: task \d+ of \d+, (\d+\.\d+) %/', $line, $matches)) {
