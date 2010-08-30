@@ -27,4 +27,6 @@ class RippingCluster_Exception_CacheObjectNotFound    extends RippingCluster_Exc
 class RippingCluster_Exception_LogicException         extends RippingCluster_Exception {};
 class RippingCluster_Exception_JobNotRunning          extends RippingCluster_Exception_LogicException {};
 
+class RippingCluster_Exception_InvalidPluginName      extends RippingCluster_Exception {};
+
 ?>
