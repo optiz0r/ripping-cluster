@@ -6,6 +6,8 @@ class RippingCluster_Job {
 
     private $id;
     private $name;
+    private $source_plugin;
+    private $rip_plugin;
     private $source_filename;
     private $destination_filename;
     private $title;
@@ -24,11 +26,13 @@ class RippingCluster_Job {
     
     private static $cache = array();
 
-    protected function __construct($source, $id, $name, $source_filename, $destination_filename, $title, $format, $video_codec, $video_width, $video_height, $quantizer, $deinterlace, 
+    protected function __construct($source, $id, $name, $source_plugin, $rip_plugin, $source_filename, $destination_filename, $title, $format, $video_codec, $video_width, $video_height, $quantizer, $deinterlace, 
             $audio_tracks, $audio_codecs, $audio_names, $subtitle_tracks) {
         $this->source                   = $source;
         $this->id                       = $id;
         $this->name                     = $name;
+        $this->source_plugin            = $source_plugin;
+        $this->rip_plugin               = $rip_plugin;
         $this->source_filename          = $source_filename;
         $this->destination_filename     = $destination_filename;
         $this->title                    = $title;
@@ -52,9 +56,11 @@ class RippingCluster_Job {
 
     public static function fromDatabaseRow($row) {
         return new RippingCluster_Job(
-            RippingCluster_Rips_Source::load($row['source'], false),
+            RippingCluster_Source_PluginFactory::load($row['source_plugin'], $row['source'], false),
             $row['id'],
             $row['name'],
+            $row['source_plugin'],
+            $row['rip_plugin'],
             $row['source'],
             $row['destination'],
             $row['title'],
@@ -87,7 +93,7 @@ class RippingCluster_Job {
         
         $job = RippingCluster_Job::fromDatabaseRow(
             $database->selectOne('SELECT * FROM jobs WHERE id=:id', array(
-                array('name' => 'id', 'value' => $id, 'type' => PDO::PARAM_INT)
+                    array('name' => 'id', 'value' => $id, 'type' => PDO::PARAM_INT)
                 )
             )
         );
@@ -132,18 +138,20 @@ class RippingCluster_Job {
         return $jobs;
     }
     
-    public static function fromPostRequest($source_id, $global_options, $titles) {
-        $source = RippingCluster_Rips_Source::loadEncoded(RippingCluster_Main::issetelse($source_id, RippingCluster_Exception_InvalidParameters));
+    public static function fromPostRequest($plugin, $source_id, $global_options, $titles) {
+        $source = RippingCluster_Source_PluginFactory::loadEncoded($plugin, RippingCluster_Main::issetelse($source_id, 'RippingCluster_Exception_InvalidParameters'));
 
         $jobs = array();
         foreach ($titles as $title => $details) {
             if (RippingCluster_Main::issetelse($details['queue'])) {
-                RippingCluster_Main::issetelse($details['output_filename'], RippingCluster_Exception_InvalidParameters);
-
+                RippingCluster_Main::issetelse($details['output_filename'], 'RippingCluster_Exception_InvalidParameters');
+                
                 $job = new RippingCluster_Job(
                     $source,
                     null,
                     RippingCluster_Main::issetelse($details['name'], 'unnamed job'),
+                    $source->plugin(),
+                    $plugin,
                     $source->filename(),
                     $global_options['output-directory'] . DIRECTORY_SEPARATOR . $details['output_filename'],
                     $title,
@@ -163,7 +171,7 @@ class RippingCluster_Job {
                 $jobs[] = $job;
             }
         }
-
+        
         return $jobs;
     }
 
@@ -174,20 +182,20 @@ class RippingCluster_Job {
         	(id,name,source,destination,title,format,video_codec,video_width,video_height,quantizer,deinterlace,audio_tracks,audio_codecs,audio_names,subtitle_tracks)
         	VALUES(NULL,:name,:source,:destination,:title,:format,:video_codec,:video_width,:video_height,:quantizer,:deinterlace,:audio_tracks,:audio_codecs,:audio_names,:subtitle_tracks)',
             array(
-                array(name => 'name',            value => $this->name,                 type => PDO::PARAM_STR),
-                array(name => 'source',          value => $this->source_filename,      type => PDO::PARAM_STR),
-                array(name => 'destination',     value => $this->destination_filename, type => PDO::PARAM_STR),
-                array(name => 'title',           value => $this->title,                type => PDO::PARAM_INT),
-                array(name => 'format',          value => $this->format,               type => PDO::PARAM_STR),
-                array(name => 'video_codec',     value => $this->video_codec,          type => PDO::PARAM_STR),
-                array(name => 'video_width',     value => $this->video_width,          type => PDO::PARAM_INT),
-                array(name => 'video_height',    value => $this->video_height,         type => PDO::PARAM_INT),
-                array(name => 'quantizer',       value => $this->quantizer,            type => PDO::PARAM_INT),
-                array(name => 'deinterlace',     value => $this->deinterlace,          type => PDO::PARAM_INT),
-                array(name => 'audio_tracks',    value => $this->audio_tracks,         type => PDO::PARAM_STR),
-                array(name => 'audio_codecs',    value => $this->audio_codecs,         type => PDO::PARAM_STR),
-                array(name => 'audio_names',     value => $this->audio_names,          type => PDO::PARAM_STR),
-                array(name => 'subtitle_tracks', value => $this->subtitle_tracks,      type => PDO::PARAM_STR),
+                array('name' => 'name',            'value' => $this->name,                 'type' => PDO::PARAM_STR),
+                array('name' => 'source',          'value' => $this->source_filename,      'type' => PDO::PARAM_STR),
+                array('name' => 'destination',     'value' => $this->destination_filename, 'type' => PDO::PARAM_STR),
+                array('name' => 'title',           'value' => $this->title,                'type' => PDO::PARAM_INT),
+                array('name' => 'format',          'value' => $this->format,               'type' => PDO::PARAM_STR),
+                array('name' => 'video_codec',     'value' => $this->video_codec,          'type' => PDO::PARAM_STR),
+                array('name' => 'video_width',     'value' => $this->video_width,          'type' => PDO::PARAM_INT),
+                array('name' => 'video_height',    'value' => $this->video_height,         'type' => PDO::PARAM_INT),
+                array('name' => 'quantizer',       'value' => $this->quantizer,            'type' => PDO::PARAM_INT),
+                array('name' => 'deinterlace',     'value' => $this->deinterlace,          'type' => PDO::PARAM_INT),
+                array('name' => 'audio_tracks',    'value' => $this->audio_tracks,         'type' => PDO::PARAM_STR),
+                array('name' => 'audio_codecs',    'value' => $this->audio_codecs,         'type' => PDO::PARAM_STR),
+                array('name' => 'audio_names',     'value' => $this->audio_names,          'type' => PDO::PARAM_STR),
+                array('name' => 'subtitle_tracks', 'value' => $this->subtitle_tracks,      'type' => PDO::PARAM_STR),
             )
         );
         
@@ -269,7 +277,7 @@ class RippingCluster_Job {
 
         $running_time = $current_status->mtime() - $current_status->ctime();
         $progress     = $current_status->ripProgress();
-
+        
         if ($progress > 0) {
             $remaining_time = round((100 - $progress) * ($running_time / $progress));
         }
