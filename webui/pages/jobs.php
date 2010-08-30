@@ -5,7 +5,7 @@ $req    = $main->request();
 $config = $main->config();
 
 if ($req->get('submit')) {
-    $action =  RippingCluster_Main::issetelse($_POST['action'], RippingCluster_Exception_InvalidParameters);
+    $action =  RippingCluster_Main::issetelse($_POST['action'], 'RippingCluster_Exception_InvalidParameters');
 
     # If a bulk action was selected, the action will be a single term, otherwise it will also contain
     # the id of the single item to act upon. Work out which was used now.
