@@ -1,13 +1,22 @@
 <?php
 
-abstract class RippingCluster_PluginFactory {
+abstract class RippingCluster_PluginFactory implements RippingCluster_IPluginFactory {
     
-    static protected $validPlugins;
+    static private $validPlugins = array();
     
-    abstract public static function init();
+    protected static function ensureScanned() {
+        if (! isset(self::$validPlugins[get_called_class()])) {
+            static::scan();
+        }
+    }
+    
+    protected static function isValidPlugin($plugin) {
+        return isset(self::$validPlugins[get_called_class()][$plugin]);
+    }
     
     public static function getValidPlugins() {
-        return array_keys(self::$validPlugins);
+        static::ensureScanned();
+        return array_keys(self::$validPlugins[get_called_class()]);
     }
     
     protected static function findPlugins($directory) {
@@ -23,26 +32,34 @@ abstract class RippingCluster_PluginFactory {
         return $plugins;
     }
     
-    protected static function loadPlugins($plugins, $prefix) {
-        self::$validPlugins = array();
+    protected static function loadPlugins($plugins, $prefix, $interface) {
+        self::$validPlugins[get_called_class()] = array();
         
         foreach ($plugins as $plugin) {
             $fullClassname = $prefix . $plugin;
             if ( ! class_exists($fullClassname, true)) {
-                echo "Cannot load $fullClassname\n";
                 continue;
             }
             
-            if ( ! in_array('RippingCluster_Worker_IPlugin', class_implements($fullClassname))) {
-                echo "$plugin does not implement the necessary interfaces\n";
+            if ( ! in_array($interface, class_implements($fullClassname))) {
                 continue;
             }
             
             // Initialise the plugin
             call_user_func(array($fullClassname, 'init'));
         
-            self::$validPlugins[$plugin] = $fullClassname;
+            self::$validPlugins[get_called_class()][$plugin] = $fullClassname;
         }
+    }
+    
+    public static function classname($plugin) {
+        static::ensureScanned();
+        
+        if ( ! self::isValidPlugin($plugin)) {
+            throw new RippingCluster_Exception_InvalidPluginName($plugin);
+        }
+        
+        return self::$validPlugins[get_called_class()][$plugin];
     }
     
 }

@@ -59,7 +59,9 @@ class RippingCluster_ForegroundTask {
                 $tx[] = $pipes[self::PIPE_STDIN];
             }
             
-            stream_select($rx, $tx, $ex = null, null, null); // Block til r/w possible
+            $ex = array();
+            
+            stream_select($rx, $tx, $ex, null, null); // Block til r/w possible
             if (!empty($tx)) {
                 $txRet = fwrite($pipes[self::PIPE_STDIN], substr($stdin, $txOff, 8192));
                 if ($txRet !== false) {

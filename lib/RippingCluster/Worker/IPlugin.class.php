@@ -1,10 +1,6 @@
 <?php
 
-interface RippingCluster_Worker_IPlugin {
-    
-    public static function init();
-    
-    public static function name();
+interface RippingCluster_Worker_IPlugin extends RippingCluster_IPlugin {
     
     public static function workerFunctions();
 

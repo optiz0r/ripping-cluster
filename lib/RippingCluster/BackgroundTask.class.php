@@ -6,7 +6,7 @@ class RippingCluster_BackgroundTask {
         
     }
 
-    public function run($command) {
+    public static function run($command) {
         $pipes = array();
         $pid = proc_open($command . ' &', array(), $pipes);
         proc_close($pid);
