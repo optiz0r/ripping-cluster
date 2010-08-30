@@ -48,8 +48,9 @@
                         {$current_status->statusName()}
                         {if $current_status->hasProgressInfo()}
                             <br />
+                            Started: <em>{$current_status->ctime()|date_format:"%D %T"}</em><br />
                             Progress: {$current_status->ripProgress()}%<br />
-                            At: <em>{$current_status->mtime()|date_format:"%D %T"}</em><br />
+                            Last update: <em>{$current_status->mtime()|date_format:"%D %T"}</em><br />
                             ETA: <em>{$job->calculateETA()|formatDuration}</em>
                         {/if}
                     </td>
