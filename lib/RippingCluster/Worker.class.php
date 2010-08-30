@@ -20,14 +20,11 @@ class RippingCluster_Worker {
         $this->gearman->addServers($config->get('rips.job_servers'));
         
         // Load all the plugin classes
-        echo "Loading Plugins\n";
         RippingCluster_Worker_PluginFactory::scan();
         foreach (RippingCluster_Worker_PluginFactory::getValidPlugins() as $plugin) {
-            echo "Grabbing worker functions provided by {$plugin}\n";
             $workerFunctions = RippingCluster_Worker_PluginFactory::getPluginWorkerFunctions($plugin);
             
             foreach ($workerFunctions as $function => $callback) {
-                echo "Adding {$plugin}::{$callback[1]} as {$function}\n";
                 $this->gearman->addFunction($function, $callback);
             }
         }
