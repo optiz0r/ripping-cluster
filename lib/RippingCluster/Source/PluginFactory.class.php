@@ -31,7 +31,7 @@ class RippingCluster_Source_PluginFactory extends RippingCluster_PluginFactory {
         
         $sources = array();
         foreach (self::getValidPlugins() as $plugin) {
-            $this->sources = array_merge($this->sources, self::enumerate($plugin));
+            $sources = array_merge($sources, self::enumerate($plugin));
         }
         
         return $sources;
