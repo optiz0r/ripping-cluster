@@ -8,7 +8,7 @@ interface RippingCluster_Source_IPlugin extends RippingCluster_IPlugin {
     
     public static function loadEncoded($encoded_filename, $scan = true, $use_cache = true);
     
-    public static function isValidSource($source);
+    public static function isValidSource($source_filename);
     
 }
 

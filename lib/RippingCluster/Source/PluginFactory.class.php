@@ -16,6 +16,27 @@ class RippingCluster_Source_PluginFactory extends RippingCluster_PluginFactory {
         self::loadPlugins($candidatePlugins, self::PLUGIN_PREFIX, self::PLUGIN_INTERFACE);
     }
     
+    public static function enumerate($plugin) {
+        self::ensureScanned();
+        
+        if ( ! self::isValidPlugin($plugin)) {
+            return null;
+        }
+        
+        return call_user_func(array(self::classname($plugin), 'enumerate'));
+    }
+    
+    public static function enumerateAll() {
+        self::ensureScanned();
+        
+        $sources = array();
+        foreach (self::getValidPlugins() as $plugin) {
+            $this->sources = array_merge($this->sources, self::enumerate($plugin));
+        }
+        
+        return $sources;
+    }
+    
     public static function load($plugin, $source_filename, $scan = true, $use_cache = true) {
         self::ensureScanned();
         
@@ -34,6 +55,16 @@ class RippingCluster_Source_PluginFactory extends RippingCluster_PluginFactory {
         }
         
         return call_user_func(array(self::classname($plugin), 'loadEncoded'), $encoded_filename, $scan, $use_cache);
+    }
+    
+    public static function isValidSource($plugin, $source_filename) {
+        self::ensureScanned();
+        
+        if ( ! self::isValidPlugin($plugin)) {
+            return null;
+        }
+        
+        return call_user_func(array(self::classname($plugin), 'isValidSource'), source_filename);
     }
     
 }
