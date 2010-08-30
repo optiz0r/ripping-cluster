@@ -115,7 +115,7 @@ class RippingCluster_Main {
     
     public function absoluteUrl($relative_url) {
         $secure = isset($_SERVER['secure']);
-        $port = $_SERVER['HTTP_PORT'];
+        $port = $_SERVER['SERVER_PORT'];
         return 'http' . ($secure ? 's' : '') . '://'
             . $_SERVER['HTTP_HOST'] . (($port == 80 || ($secure && $port == 443)) ? '' : ':' . $port)
             . '/' . $this->base_uri . $relative_url; 
@@ -187,7 +187,7 @@ class RippingCluster_Main {
         }
 
         $labels = array('seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years');
-        $limits = array(60, 3600, 86400, 604800, 2592000, 31556926, PHP_INT_MAX);
+        $limits = array(1, 60, 3600, 86400, 604800, 2592000, 31556926, PHP_INT_MAX);
 
         $working_time = $time;
 
