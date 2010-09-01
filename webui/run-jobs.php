@@ -45,7 +45,7 @@ function gearman_created_callback($gearman_task) {
     $log = $main->log();
 
     $job = RippingCluster_Job::fromId($gearman_task->unique());
-    $job->updateStatus(RippingCluster_JobStatus::RUNNING);
+    $job->updateStatus(RippingCluster_JobStatus::QUEUED);
     
     $log->info("Job successfully queued with Gearman", $gearman_task->unique());
 }
@@ -54,7 +54,7 @@ function gearman_data_callback($gearman_task) {
     $main = RippingCluster_Main::instance();
     $log = $main->log();
     
-    $log->debug("Got some data from gearman", $gearman_task->unique());
+    $log->debug("Received data callback from Gearman Task");
 }
 
 function gearman_status_callback($gearman_task) {
