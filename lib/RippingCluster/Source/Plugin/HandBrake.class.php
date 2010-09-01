@@ -8,7 +8,7 @@ class RippingCluster_Source_Plugin_HandBrake implements RippingCluster_Source_IP
     const PM_CHAPTER  = 1;
     const PM_AUDIO    = 2;
     const PM_SUBTITLE = 3;
-
+    
     public static function init() {
         // Nothing to do
     }
@@ -48,14 +48,14 @@ class RippingCluster_Source_Plugin_HandBrake implements RippingCluster_Source_IP
 
         // Ensure the source is a valid directory, and lies below the configured source_dir
         if ( ! self::isValidSource($source_filename)) {
-            throw new RippingCluster_Exception_InvalidSourceDirectory($source_filename);
+            return new RippingCluster_Source($source_filename, self::name(), false);
         }
             
         $source = null;
         if ($use_cache && $cache->exists($source_filename)) {
             $source = unserialize($cache->fetch($source_filename));
         } else {
-            $source = new RippingCluster_Source($source_filename, self::name());
+            $source = new RippingCluster_Source($source_filename, self::name(), true);
             
             if ($scan) {
                 $source_shell = escapeshellarg($source_filename);

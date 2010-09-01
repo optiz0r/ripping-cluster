@@ -7,14 +7,15 @@ class RippingCluster_Source {
     const PM_AUDIO = 2;
     const PM_SUBTITLE = 3;
     
+    protected $exists;
     protected $filename;
     protected $plugin;
     protected $titles = array();
 
-    public function __construct($source_filename, $plugin) {
+    public function __construct($source_filename, $plugin, $exists) {
+        $this->exists   = $exists;
         $this->filename = $source_filename;
-        $this->plugin = $plugin;
-
+        $this->plugin   = $plugin;
     }
     
     public static function isCached($source_filename) {
@@ -26,6 +27,10 @@ class RippingCluster_Source {
     }
     
     public function cache() {
+        if (!$this->exists) {
+            throw new RippingCluster_Exception_InvalidSourceDirectory();
+        }
+        
         $main   = RippingCluster_Main::instance();
         $cache  = $main->cache();
         $config = $main->config();
@@ -38,11 +43,19 @@ class RippingCluster_Source {
     }
     
     public function addTitle(RippingCluster_Rips_SourceTitle $title) {
+        if (!$this->exists) {
+            throw new RippingCluster_Exception_InvalidSourceDirectory();
+        }
+        
         $this->titles[] = $title;
     }
     
 	public function longestTitle() {
-	    $longest_title = null;
+	    if (!$this->exists) {
+            throw new RippingCluster_Exception_InvalidSourceDirectory();
+        }
+        
+        $longest_title = null;
 	    $maximum_duration = 0;
 	    
 	    if ( ! $this->titles) {
@@ -61,6 +74,10 @@ class RippingCluster_Source {
     }
 
     public function longestTitleIndex() {
+        if (!$this->exists) {
+            throw new RippingCluster_Exception_InvalidSourceDirectory();
+        }
+        
         $longest_index = null;
         $maximmum_duration = 0;
 
@@ -93,10 +110,18 @@ class RippingCluster_Source {
     }
 
     public function titleCount() {
+        if (!$this->exists) {
+            throw new RippingCluster_Exception_InvalidSourceDirectory();
+        }
+        
         return count($this->titles);
     }
 
     public function titles() {
+        if (!$this->exists) {
+            throw new RippingCluster_Exception_InvalidSourceDirectory();
+        }
+        
         return $this->titles;
     }
 
