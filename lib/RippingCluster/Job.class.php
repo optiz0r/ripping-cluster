@@ -223,6 +223,7 @@ class RippingCluster_Job {
         
         // Construct the rip options
         $rip_options = array(
+            'id'              => $this->id,
             'nice'            => $config->get('rips.nice', 15),
             'input_filename'  => $this->source_filename,
             'output_filename' => $this->destination_filename,
@@ -240,12 +241,13 @@ class RippingCluster_Job {
         );
         
         // Enqueue this rip
+        if ( ! $this->id) {
+            throw new RippingCluster_Exception_LogicException("Rip cannot be queued without being saved!");
+        }
         $task = $gearman->addTask('handbrake_rip', serialize($rip_options), $config->get('rips.context'), $this->id);
         if ($task) {
-            $log->debug("Queued job", $this->id);
             $this->updateStatus(RippingCluster_JobStatus::QUEUED);
         } else {
-            $log->warning("Failed to queue job", $this->id);
             $this->updateStatus(RippingCluster_JobStatus::FAILED);
         }
     }
@@ -266,7 +268,10 @@ class RippingCluster_Job {
     }
     
     public function updateStatus($new_status, $rip_progress = null) {
-        return RippingCluster_JobStatus::updateStatusForJob($this, $new_status, $rip_progress);
+        $this->loadStatuses();
+        $new_status = RippingCluster_JobStatus::updateStatusForJob($this, $new_status, $rip_progress);
+        $this->statuses[] = $new_status;
+        return $new_status;
     }
 
     public function calculateETA() {
