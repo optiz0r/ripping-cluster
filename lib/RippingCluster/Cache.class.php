@@ -34,6 +34,8 @@ class RippingCluster_Cache {
         
         // Check to see if the cache has expired
         if (filemtime($cache_filename) + $ttl < time()) {
+            // Delete the cached item
+            unlink($cache_filename);
             return false;
         }
         
