@@ -52,7 +52,7 @@ class RippingCluster_Database {
 
 			$result = $stmt->execute();
 			if (!$result) {
-                list($code, $dummy, $message) = $stmt->errorInfo();
+                list($dummy, $code, $message) = $stmt->errorInfo();
                 throw new RippingCluster_Exception_DatabaseQueryFailed($message, $code);
 			}
 
