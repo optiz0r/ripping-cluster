@@ -68,7 +68,7 @@ class RippingCluster_JobStatus {
         }
 
         return $statuses;
-    } 
+    }
     
     protected function create() {
         $database = RippingCluster_Main::instance()->database();
@@ -104,11 +104,22 @@ class RippingCluster_JobStatus {
             )
         );
     }
-
+    
     public function hasProgressInfo() {
         return ($this->status == self::RUNNING);
     }
 
+    public static function fixBrokenTimestamps() {
+        $statuses = array();
+        
+        $database = RippingCluster_Main::instance()->database();
+        foreach ($database->selectList('SELECT * FROM job_status WHERE status=4 AND job_id IN (SELECT job_id FROM job_status WHERE status=3)') as $row) {
+            $status = RippingCluster_JobStatus::fromDatabaseRow($row);
+            $status->mtime = time();
+            $status->save();
+        }    
+    }
+    
     public function id() {
         return $this->id;
     }
@@ -129,7 +140,11 @@ class RippingCluster_JobStatus {
         return $this->ctime;
     }
 
-    public function mtime() {
+    public function mtime($new_mtime = null) {
+        if ($new_mtime !== null) {
+            $this->mtime = $new_mtime;
+        }
+        
         return $this->mtime;
     }
     

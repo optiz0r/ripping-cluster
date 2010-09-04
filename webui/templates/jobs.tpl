@@ -26,6 +26,7 @@
         <input type="image" class="icon" name="action" id="mark-failed-top" value="mark-failed" src="{$base_uri}images/caution.png" alt="Mark all marked jobs as failed" />
         <input type="image" class="icon" name="action" id="redo-top" value="retry" src="{$base_uri}images/redo.png" alt="Repeat all marked jobs" />
         <input type="image" class="icon" name="action" id="delete-top" value="delete" src="{$base_uri}images/trash.png" alt="Delete all marked jobs" />
+        <input type="image" class="icon" name="action" id="fix-broken-timestamps-top" value="fix-broken-timestamps" src="{$base_uri}images/clock.png" alt="Fix Broken Timestamps in Statuses" />
     </fieldset>
     <table>
         <thead>
@@ -60,6 +61,7 @@
                             <input type="image" class="icon" name="action" id="mark-failed-{$job->id()}" value="mark-failed[{$job->id()}]" src="{$base_uri}images/caution.png" alt="Mark job as failed" />
                             <input type="image" class="icon" name="action" id="redo-{$job->id()}" value="retry[{$job->id()}]" src="{$base_uri}images/redo.png" alt="Repeat job" />
                             <input type="image" class="icon" name="action" id="delete-{$job->id()}" value="delete[{$job->id()}]" src="{$base_uri}images/trash.png" alt="Delete job" />
+                            <input type="image" class="icon" name="action" id="fix-broken-timestamps-{$job->id()}" value="fix-broken-timestamps[{$job->id()}]" src="{$base_uri}images/clock.png" alt="Fix broken status timestamps" />
                         </fieldset>
                     </td>
                 </tr>
@@ -72,6 +74,7 @@
         <input type="image" class="icon" name="action" id="mark-failed-bottom" value="mark-failed" src="{$base_uri}images/caution.png" alt="Mark all marked jobs as failed" />
         <input type="image" class="icon" name="action" id="redo-bottom" value="retry" src="{$base_uri}images/redo.png" alt="Repeat all marked jobs" />
         <input type="image" class="icon" name="action" id="delete-bottom" value="delete" src="{$base_uri}images/trash.png" alt="Delete all marked jobs" />
+        <input type="image" class="icon" name="action" id="fix-broken-timestamps-bottom" value="fix-broken-timestamps" src="{$base_uri}images/clock.png" alt="Fix Broken Timestamps in Statuses" />
     </fieldset>
     </form>
 {else}

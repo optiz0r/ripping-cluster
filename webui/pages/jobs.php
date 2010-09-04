@@ -52,6 +52,12 @@ if ($req->get('submit')) {
                 $job->delete();
             }
         } break;
+        
+        case 'fix-broken-timestamps': {
+            foreach ($jobs as $job) {
+                $job->fixBrokenTimestamps();
+            }
+        } break;
 
         default: {
             throw new RippingCluster_Exception_InvalidParameters('action');

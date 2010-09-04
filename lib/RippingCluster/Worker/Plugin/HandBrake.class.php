@@ -82,6 +82,8 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
         list($return_val, $stdout, $stderr) = RippingCluster_ForegroundTask::execute($handbrake_cmd, null, null, null, array($this, 'callbackOutput'), array($this, 'callbackOutput'), $this);
         if ($return_val) {
             $this->gearman_job->sendFail($return_val);
+        } else {
+            $this->job->updateStatus(RippingCluster_JobStatus::COMPLETE);
         }
     }
     

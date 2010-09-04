@@ -22,6 +22,10 @@ class RippingCluster_Job {
     private $audio_names;
     private $subtitle_tracks; 
 
+    /**
+     * 
+     * @var array(RippingCluster_JobStatus)
+     */
     private $statuses = null;
     
     private static $cache = array();
@@ -269,8 +273,13 @@ class RippingCluster_Job {
     
     public function updateStatus($new_status, $rip_progress = null) {
         $this->loadStatuses();
-        $new_status = RippingCluster_JobStatus::updateStatusForJob($this, $new_status, $rip_progress);
-        $this->statuses[] = $new_status;
+        
+        // Only update the status if the state is changing
+        if ($this->currentStatus()->status() != $new_status) {
+            $new_status = RippingCluster_JobStatus::updateStatusForJob($this, $new_status, $rip_progress);
+            $this->statuses[] = $new_status;
+        }
+        
         return $new_status;
     }
 
@@ -289,7 +298,30 @@ class RippingCluster_Job {
 
         return $remaining_time;
     }
-
+    
+    public function fixBrokenTimestamps() {
+        $this->loadStatuses();
+        
+        // See if we have both a RUNNING and a COMPLETE status set
+        $statuses = array();
+        foreach ($this->statuses as $status) {
+            switch ($status->status()) {
+                case RippingCluster_JobStatus::RUNNING:
+                case RippingCluster_JobStatus::COMPLETE:
+                    $statuses[$status->status()] = $status;
+                    break;
+            }
+        }
+        
+        if (isset($statuses[RippingCluster_JobStatus::RUNNING]) && isset($statuses[RippingCluster_JobStatus::COMPLETE])) {
+            // Ensure the timestamp on the complete is >= that of the running status
+            if ($statuses[RippingCluster_JobStatus::COMPLETE]->mtime() < $statuses[RippingCluster_JobStatus::RUNNING]->mtime()) {
+                $statuses[RippingCluster_JobStatus::COMPLETE]->mtime($statuses[RippingCluster_JobStatus::RUNNING]->mtime() + 1);
+                $statuses[RippingCluster_JobStatus::COMPLETE]->save();
+            }
+        }        
+    }
+    
     public function id() {
         return $this->id;
     }
