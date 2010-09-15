@@ -1,7 +1,12 @@
 <?php
 
-class RippingCluster_Source_Plugin_HandBrake implements RippingCluster_Source_IPlugin {
+class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase implements RippingCluster_Source_IPlugin {
     
+    /**
+     * Name of this plugin
+     *
+     * @var string
+     */
     const PLUGIN_NAME = "HandBrake";
     
     const PM_TITLE    = 0;
@@ -9,14 +14,13 @@ class RippingCluster_Source_Plugin_HandBrake implements RippingCluster_Source_IP
     const PM_AUDIO    = 2;
     const PM_SUBTITLE = 3;
     
-    public static function init() {
-        // Nothing to do
-    }
-    
-    public static function name() {
-        return self::PLUGIN_NAME;
-    }
-    
+    /**
+     * Returns a list of all Sources discovered by this plugin.
+     * 
+     * The sources are not scanned until specifically requested.
+     * 
+     * @return array(RippingCluster_Source)
+     */
     public static function enumerate() {
         $config = RippingCluster_Main::instance()->config();
         $directory = $config->get('source.handbrake.dir');
@@ -36,11 +40,16 @@ class RippingCluster_Source_Plugin_HandBrake implements RippingCluster_Source_IP
     }
     
     /**
+     * Creates an object to represent the given source.
      * 
+     * The source is not actually scanned unless specifically requested.
+     * An unscanned object cannot be used until it has been manually scanned.
      * 
-     * @param string $source
-     * @param bool $scan
-     * @param bool $use_cache 
+     * If requested, the source can be cached to prevent high load, and long scan times.
+     * 
+     * @param string $source_filename Filename of the source
+     * @param bool $scan Request that the source be scanned for content. Defaults to true.
+     * @param bool $use_cache Request that the cache be used. Defaults to true.
      * @return RippingCluster_Source
      */
     public static function load($source_filename, $scan = true, $use_cache = true) {
@@ -160,6 +169,18 @@ class RippingCluster_Source_Plugin_HandBrake implements RippingCluster_Source_IP
         return $source;
     }
     
+    /**
+     * Creates an object to represent the given source using an encoded filename.
+     * 
+     * Wraps the call to load the source after the filename has been decoded.
+     * 
+     * @param string $encoded_filename Encoded filename of the source
+     * @param bool  $scan Request that the source be scanned for content. Defaults to true.
+     * @param bool $use_cache Request that the cache be used. Defaults to true.
+     * @return RippingCluster_Source
+     * 
+     * @see RippingCluster_Source_IPlugin::load()
+     */
     public static function loadEncoded($encoded_filename, $scan = true, $use_cache = true) {
         // Decode the filename
         $source_filename = base64_decode(str_replace('-', '/', $encoded_filename));
@@ -167,6 +188,12 @@ class RippingCluster_Source_Plugin_HandBrake implements RippingCluster_Source_IP
         return self::load($source_filename, $scan, $use_cache);
     }
     
+    /**
+     * Determins if a filename is a valid source loadable using this plugin
+     * 
+     * @param string $source_filename Filename of the source
+     * @return bool
+     */
     public static function isValidSource($source_filename) {
         $config = RippingCluster_Main::instance()->config();
         
@@ -176,7 +203,7 @@ class RippingCluster_Source_Plugin_HandBrake implements RippingCluster_Source_IP
         }
         $real_source_filename = realpath($source_filename);
         
-        $source_basedir = $config->get('rips.source_dir');
+        $source_basedir = $config->get('source.handbrake.dir');
         $real_source_basedir = realpath($source_basedir);
         
         if (substr($real_source_filename, 0, strlen($real_source_basedir)) != $real_source_basedir) {

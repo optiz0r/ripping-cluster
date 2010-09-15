@@ -1,6 +1,6 @@
 <?php
 
-class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IPlugin {
+class RippingCluster_Worker_Plugin_HandBrake extends RippingCluster_PluginBase implements RippingCluster_Worker_IPlugin {
 
     const PLUGIN_NAME = 'HandBrake';
     
@@ -26,26 +26,28 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
         $this->job = RippingCluster_Job::fromId($this->rip_options['id']);
     }
     
-    public static function init() {
-        // Nothing to do
-    }
-    
-    public static function name() {
-        return self::PLUGIN_NAME;
-    }
-    
+    /**
+     * Returns the list of functions (and names) implemented by this plugin for registration with Gearman
+     * 
+     * @return array(string => callback)
+     */
     public static function workerFunctions() {
         return array(
             'handbrake_rip' => array(__CLASS__, 'rip'),
         );
     }
     
+    /**
+     * Creates an instance of the Worker plugin, and uses it to execute a single job
+     *
+     * @param GearmanJob $job Gearman Job object, describing the work to be done
+     */
     public static function rip(GearmanJob $job) {
         $rip = new self($job);
         $rip->execute();
     }
         
-    public function execute() {
+    private function execute() {
         $main   = RippingCluster_Main::instance();
         $config = $main->config();
         $log    = $main->log();
@@ -87,7 +89,7 @@ class RippingCluster_Worker_Plugin_HandBrake implements RippingCluster_Worker_IP
         }
     }
     
-    public function evaluateOption($name, $option = null) {
+    private function evaluateOption($name, $option = null) {
         switch($name) {
             case 'title': {
                 if (!$this->rip_options[$name] || (int)$this->rip_options[$name] < 0) {
