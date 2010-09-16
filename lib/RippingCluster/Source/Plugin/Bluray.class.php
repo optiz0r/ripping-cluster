@@ -2,6 +2,10 @@
 
 class RippingCluster_Source_Plugin_Bluray extends RippingCluster_PluginBase implements RippingCluster_Source_IPlugin {
     
+    /**
+     * Name of this plugin
+     * @var string
+     */
     const PLUGIN_NAME = "Bluray";
     
     /**
