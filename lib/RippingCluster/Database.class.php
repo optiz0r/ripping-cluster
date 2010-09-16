@@ -32,11 +32,20 @@ class RippingCluster_Database {
         $this->dbh = null;
     }
 
-    public function selectAssoc($sql, $key_col, $value_col) {
+    public function selectAssoc($sql, $key_col, $value_cols) {
         $results = array();
 
         foreach ($this->dbh->query($sql) as $row) {
-            $results[$row[$key_col]] = $row[$value_col];
+            if (is_array($value_cols)) {
+                $values = array();
+                foreach ($value_cols as $value_col) {
+                    $values[$value_col] = $row[$value_col];
+                }
+                
+                $results[$row[$key_col]] = $values;
+            } else {
+                $results[$row[$key_col]] = $row[$value_col];
+            }
         }
 
         return $results;
