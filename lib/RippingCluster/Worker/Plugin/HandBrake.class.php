@@ -9,6 +9,8 @@ class RippingCluster_Worker_Plugin_HandBrake extends RippingCluster_PluginBase i
     
     private $output;
     
+    private $gearman_job;
+    
     private $job;
     
     private $rip_options;
