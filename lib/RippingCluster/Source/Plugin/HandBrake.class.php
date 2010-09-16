@@ -23,17 +23,19 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
      */
     public static function enumerate() {
         $config = RippingCluster_Main::instance()->config();
-        $directory = $config->get('source.handbrake.dir');
+        $directories = $config->get('source.handbrake.dir');
         
-        if (!is_dir($directory)) {
-            throw new RippingCluster_Exception_InvalidSourceDirectory($directory);
-        }
-        
-        $sources = array();
-        
-        $iterator = new RippingCluster_Utility_DvdDirectoryIterator(new RippingCluster_Utility_VisibleFilesIterator(new DirectoryIterator($directory)));
-        foreach ($iterator as /** @var SplFileInfo */ $source_vts) {
-            $sources[] = self::load($source_vts->getPathname(), false);
+        foreach ($directories as $directory) {
+            if (!is_dir($directory)) {
+                throw new RippingCluster_Exception_InvalidSourceDirectory($directory);
+            }
+            
+            $sources = array();
+            
+            $iterator = new RippingCluster_Utility_DvdDirectoryIterator(new RippingCluster_Utility_VisibleFilesIterator(new DirectoryIterator($directory)));
+            foreach ($iterator as /** @var SplFileInfo */ $source_vts) {
+                $sources[] = self::load($source_vts->getPathname(), false);
+            }
         }
         
         return $sources;
@@ -203,11 +205,14 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
         }
         $real_source_filename = realpath($source_filename);
         
-        $source_basedir = $config->get('source.handbrake.dir');
-        $real_source_basedir = realpath($source_basedir);
-        
-        if (substr($real_source_filename, 0, strlen($real_source_basedir)) != $real_source_basedir) {
-            return false;
+        // Check all of the source directories specified in the config
+        $source_directories = $config->get('source.handbrake.dir');
+        foreach ($source_directories as $source_basedir) { 
+            $real_source_basedir = realpath($source_basedir);
+            
+            if (substr($real_source_filename, 0, strlen($real_source_basedir)) != $real_source_basedir) {
+                return false;
+            }
         }
         
         return true;
