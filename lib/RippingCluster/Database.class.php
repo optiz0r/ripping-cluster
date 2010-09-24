@@ -23,7 +23,7 @@ class RippingCluster_Database {
         try {
             $this->dbh  = new PDO("mysql:host={$this->hostname};dbname={$this->dbname}", $this->username, $this->password);
         } catch (PDOException $e) {
-            throw new RippingCluster_Exception_DatabaseConnectionFailed($e->getMessage());
+            throw new RippingCluster_Exception_DatabaseConnectFailed($e->getMessage());
         }
 
     }
