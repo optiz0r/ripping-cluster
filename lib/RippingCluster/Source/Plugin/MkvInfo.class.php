@@ -1,12 +1,18 @@
 <?php
 
-class RippingCluster_Source_Plugin_Bluray extends RippingCluster_PluginBase implements RippingCluster_Source_IPlugin {
+class RippingCluster_Source_Plugin_MkvInfo extends RippingCluster_PluginBase implements RippingCluster_Source_IPlugin {
     
     /**
      * Name of this plugin
      * @var string
      */
-    const PLUGIN_NAME = "Bluray";
+    const PLUGIN_NAME = 'MkvInfo';
+    
+    /**
+     * Name of the config setting that stores the list of source directories for this pluing
+     * @var string
+     */
+    const CONFIG_SOURCE_DIR = 'source.mkvinfo.dir';
     
     /**
      * Returns a list of all Sources discovered by this plugin.
@@ -17,17 +23,17 @@ class RippingCluster_Source_Plugin_Bluray extends RippingCluster_PluginBase impl
      */
     public static function enumerate() {
         $config = RippingCluster_Main::instance()->config();
-        $directories = $config->get('source.bluray.dir');
+        $directories = $config->get(self::CONFIG_SOURCE_DIR);
         
-        $sources = array();    
+        $sources = array();
         foreach ($directories as $directory) {
             if (!is_dir($directory)) {
                 throw new RippingCluster_Exception_InvalidSourceDirectory($directory);
             }
             
-            $iterator = new RippingCluster_Utility_BlurayDirectoryIterator(new RippingCluster_Utility_VisibleFilesIterator(new DirectoryIterator($directory)));
-            foreach ($iterator as /** @var SplFileInfo */ $source_vts) {
-                $sources[] = self::load($source_vts->getPathname(), false);
+            $iterator = new RippingCluster_Utility_MkvFileIterator(new RecursiveIteratorIterator(new RippingCluster_Utility_VisibleFilesRecursiveIterator(new RecursiveDirectoryIterator($directory))));
+            foreach ($iterator as /** @var SplFileInfo */ $source_mkv) {
+                $sources[] = self::load($source_mkv->getPathname(), false);
             }
         }
         
@@ -105,7 +111,7 @@ class RippingCluster_Source_Plugin_Bluray extends RippingCluster_PluginBase impl
         $real_source_filename = realpath($source_filename);
         
             // Check all of the source directories specified in the config
-        $source_directories = $config->get('source.bluray.dir');
+        $source_directories = $config->get(self::CONFIG_SOURCE_DIR);
         foreach ($source_directories as $source_basedir) { 
             $real_source_basedir = realpath($source_basedir);
             

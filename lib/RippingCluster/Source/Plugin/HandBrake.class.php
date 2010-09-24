@@ -25,12 +25,11 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
         $config = RippingCluster_Main::instance()->config();
         $directories = $config->get('source.handbrake.dir');
         
+        $sources = array();
         foreach ($directories as $directory) {
             if (!is_dir($directory)) {
                 throw new RippingCluster_Exception_InvalidSourceDirectory($directory);
             }
-            
-            $sources = array();
             
             $iterator = new RippingCluster_Utility_DvdDirectoryIterator(new RippingCluster_Utility_VisibleFilesIterator(new DirectoryIterator($directory)));
             foreach ($iterator as /** @var SplFileInfo */ $source_vts) {
@@ -207,15 +206,15 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
         
         // Check all of the source directories specified in the config
         $source_directories = $config->get('source.handbrake.dir');
-        foreach ($source_directories as $source_basedir) { 
+        foreach ($source_directories as $source_basedir) {
             $real_source_basedir = realpath($source_basedir);
             
-            if (substr($real_source_filename, 0, strlen($real_source_basedir)) != $real_source_basedir) {
-                return false;
+            if (substr($real_source_filename, 0, strlen($real_source_basedir)) == $real_source_basedir) {
+                return true;
             }
         }
         
-        return true;
+        return false;
     }
     
 }

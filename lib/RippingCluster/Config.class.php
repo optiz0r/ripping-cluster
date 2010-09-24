@@ -132,8 +132,8 @@ class RippingCluster_Config {
         }
 
         switch ($this->settings[$key]['type']) {
-            case TYPE_STRING_LIST:
-                return explode("\n", $this->settings[$key]['value']);
+            case self::TYPE_STRING_LIST:
+                return array_map('trim', explode("\n", $this->settings[$key]['value']));
                 
             default:
                return $this->settings[$key]['value'];
