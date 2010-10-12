@@ -54,20 +54,40 @@ class RippingCluster_Rips_SourceTitle {
 		return $this->width;
 	}
 	
+	public function setWidth($width) {
+	    $this->width = $width;
+	}
+	
 	public function height() {
 		return $this->height;
+	}
+	
+	public function setHeight($height) {
+	    $this->height = $height;
 	}
 	
 	public function displayAspect() {
 		return $this->display_aspect;
 	}
 	
+	public function setDisplayAspect($display_aspect) {
+	    $this->display_aspect = $display_aspect;
+	}
+	
 	public function pixelAspect() {
 		return $this->pixel_aspect;
 	}
 	
+	public function setPixelAspect($pixel_aspect) {
+	    $this->pixel_aspect = $pixel_aspect;
+	}
+	
 	public function framerate() {
 		return $this->framerate;
+	}
+	
+	public function setFramerate($framerate) {
+	    $this->framerate = $framerate;
 	}
 	
 	public function setDisplayInfo($width, $height, $display_aspect, $pixel_aspect, $framerate) {

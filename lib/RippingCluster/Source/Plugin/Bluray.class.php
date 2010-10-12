@@ -19,12 +19,11 @@ class RippingCluster_Source_Plugin_Bluray extends RippingCluster_PluginBase impl
         $config = RippingCluster_Main::instance()->config();
         $directories = $config->get('source.bluray.dir');
         
+        $sources = array();    
         foreach ($directories as $directory) {
             if (!is_dir($directory)) {
                 throw new RippingCluster_Exception_InvalidSourceDirectory($directory);
             }
-            
-            $sources = array();
             
             $iterator = new RippingCluster_Utility_BlurayDirectoryIterator(new RippingCluster_Utility_VisibleFilesIterator(new DirectoryIterator($directory)));
             foreach ($iterator as /** @var SplFileInfo */ $source_vts) {

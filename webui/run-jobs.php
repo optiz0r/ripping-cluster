@@ -14,7 +14,6 @@ try {
     $gearman->addServers($config->get('rips.job_servers'));
     $gearman->setCreatedCallback("gearman_created_callback");
     $gearman->setDataCallback("gearman_data_callback");
-    $gearman->setStatusCallback("gearman_status_callback");
     $gearman->setCompleteCallback("gearman_complete_callback");
     $gearman->setFailCallback("gearman_fail_callback");
     

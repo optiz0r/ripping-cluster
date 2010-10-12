@@ -1,18 +1,25 @@
 <?php
 
-class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase implements RippingCluster_Source_IPlugin {
+class RippingCluster_Source_Plugin_MkvInfo extends RippingCluster_PluginBase implements RippingCluster_Source_IPlugin {
     
     /**
      * Name of this plugin
-     *
      * @var string
      */
-    const PLUGIN_NAME = "HandBrake";
+    const PLUGIN_NAME = 'MkvInfo';
     
-    const PM_TITLE    = 0;
-    const PM_CHAPTER  = 1;
-    const PM_AUDIO    = 2;
-    const PM_SUBTITLE = 3;
+    /**
+     * Name of the config setting that stores the list of source directories for this pluing
+     * @var string
+     */
+    const CONFIG_SOURCE_DIR = 'source.mkvinfo.dir';
+    
+    const PM_HEADERS  = 0;
+    const PM_TRACK    = 1;
+    const PM_TITLE    = 2;
+    const PM_CHAPTER  = 3;
+    const PM_AUDIO    = 4;
+    const PM_SUBTITLE = 5;
     
     /**
      * Returns a list of all Sources discovered by this plugin.
@@ -23,7 +30,7 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
      */
     public static function enumerate() {
         $config = RippingCluster_Main::instance()->config();
-        $directories = $config->get('source.handbrake.dir');
+        $directories = $config->get(self::CONFIG_SOURCE_DIR);
         
         $sources = array();
         foreach ($directories as $directory) {
@@ -31,9 +38,9 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
                 throw new RippingCluster_Exception_InvalidSourceDirectory($directory);
             }
             
-            $iterator = new RippingCluster_Utility_DvdDirectoryIterator(new RippingCluster_Utility_VisibleFilesIterator(new DirectoryIterator($directory)));
-            foreach ($iterator as /** @var SplFileInfo */ $source_vts) {
-                $sources[] = self::load($source_vts->getPathname(), false);
+            $iterator = new RippingCluster_Utility_MkvFileIterator(new RecursiveIteratorIterator(new RippingCluster_Utility_VisibleFilesRecursiveIterator(new RecursiveDirectoryIterator($directory))));
+            foreach ($iterator as /** @var SplFileInfo */ $source_mkv) {
+                $sources[] = self::load($source_mkv->getPathname(), false);
             }
         }
         
@@ -55,6 +62,7 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
      */
     public static function load($source_filename, $scan = true, $use_cache = true) {
         $cache = RippingCluster_Main::instance()->cache();
+        $config = RippingCluster_Main::instance()->config();
 
         // Ensure the source is a valid directory, and lies below the configured source_dir
         if ( ! self::isValidSource($source_filename)) {
@@ -66,65 +74,90 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
             $source = unserialize($cache->fetch($source_filename));
         } else {
             $source = new RippingCluster_Source($source_filename, self::name(), true);
-            
+           
             if ($scan) {
-                $source_shell = escapeshellarg($source_filename);
-                $handbrake_cmd = "HandBrakeCLI -i {$source_shell} -t 0";
-                list($retval, $handbrake_output, $handbrake_error) = RippingCluster_ForegroundTask::execute($handbrake_cmd);
+                $cmd = escapeshellcmd($config->get('source.mkvinfo.bin')) . ' ' . escapeshellarg($source_filename);
+                list($retval, $output, $error) = RippingCluster_ForegroundTask::execute($cmd);
                 
                 // Process the output
-                $lines = explode("\n", $handbrake_error);
-                $title = null;
-                $mode = self::PM_TITLE;
-        
+                $lines = explode("\n", $output);
+                $track = null;
+                $track_details = null;
+                $duration = null;
+                $mode = self::PM_HEADERS;
+                
                 foreach ($lines as $line) {
-                    // Skip any line that doesn't begin with a + (with optional leading whitespace)
-                    if ( ! preg_match('/\s*\+/', $line)) {
+                    // Skip any line that doesn't begin with a |+ (with optional whitespace)
+                    if ( ! preg_match('/^|\s*\+/', $line)) {
                         continue;
                     }
         
                     $matches = array();
                     switch (true) {
-                       case preg_match('/^\+ title (?P<id>\d+):$/', $line, $matches): {
-                            if ($title) {
-                                $source->addTitle($title);
+                        
+                        case $mode == self::PM_HEADERS && preg_match('/^| \+ Duration: [\d\.]+s ([\d:]+])$/', $line, $matches): {
+                            $duration = $matches['duration'];
+                        } break;
+                        
+                        case preg_match('/^| \+ A track$/', $line, $matches): {
+                            $mode = self::PM_TRACK;
+                            $track_details = array();
+                        } break;
+                        
+                        case $mode == self::PM_TRACK && preg_match('/^|  \+ Track number: (?P<id>\d+):$/', $line, $matches): {
+                            $track_details['id'] = $matches['id'];
+                        } break;
+                        
+                        case $mode == self::PM_TRACK && preg_match('/^|  \+ Track type: (?P<type>.+)$/', $line, $matches): {
+                            switch ($type) {
+                                case 'video': {
+                                    $mode = self::PM_TITLE;
+                                    $track = new RippingCluster_Rips_SourceTitle($track_details['id']);
+                                    $track->setDuration($duration);
+                                } break;
+                                
+                                case 'audio': {
+                                    $mode = self::PM_AUDIO;
+                                    $track = new RippingCluster_Rips_SourceAudioTrack($track_details['id']);
+                                } break;
+                                
+                                case 'subtitles': {
+                                    $mode = self::PM_SUBTITLE;
+                                    $track = new RippingCluster_Rips_SourceSubtitleTrack($track_details['id']);
+                                } break;
                             }
-                            
-                            $mode = self::PM_TITLE;
-                            $title = new RippingCluster_Rips_SourceTitle($matches['id']);
                         } break;
                         
-                        case $title && preg_match('/^  \+ chapters:$/', $line): {
-                            $mode = self::PM_CHAPTER;    
+                        case $mode == self::PM_AUDIO && $track && preg_match('/^|  \+ Codec ID: (?P<codec>.+)$/', $line, $matches): {
+                            $track->setFormat($matches['codec']);
                         } break;
                         
-                        case $title && preg_match('/^  \+ audio tracks:$/', $line): {
-                            $mode = self::PM_AUDIO;
-                            
+                        case $mode == self::PM_AUDIO && $track && preg_match('/^|  \+ Language: (?P<language>.+)$/', $line, $matches): {
+                            $track->setLanguage($matches['language']);
                         } break;
                         
-                        case $title && preg_match('/^  \+ subtitle tracks:$/', $line): {
-                            $mode = self::PM_SUBTITLE;
+                        case $mode == self::PM_AUDIO && $track && preg_match('/^|   \+ Sampling frequency: (?P<samplerate>.+)$/', $line, $matches): {
+                            $track->setSampleRate($matches['samplerate']);
                         } break;
                         
-                        case $title && $mode == self::PM_TITLE && preg_match('/^  \+ duration: (?P<duration>\d+:\d+:\d+)$/', $line, $matches): {
-                            $title->setDuration($matches['duration']);
+                        case $mode == self::PM_AUDIO && $track && preg_match('/^|   \+ Channels: (?P<channels>.+)$/', $line, $matches): {
+                            $track->setFormat($matches['channels']);
                         } break;
                         
-                        case $title && $mode == self::PM_TITLE && preg_match('/^  \+ angle\(s\) (?P<angles>\d+)$/', $line, $matches): {
-                            $title->setAngles($matches['angles']);
+                        case $mode == self::PM_SUBTITLE && $track && preg_match('/^|  \+ Language: (?P<language>.*)$/', $line): {
+                            $track->setLanguage($matches['language']);
                         } break;
                         
-                        //"  + size: 720x576, pixel aspect: 64/45, display aspect: 1.78, 25.000 fps"
-                        case $title && $mode == self::PM_TITLE && preg_match('/^  \+ size: (?P<width>\d+)x(?P<height>\d+), pixel aspect: (?P<pixel_aspect>\d+\/\d+), display aspect: (?P<display_aspect>[\d\.]+), (?<framerate>[\d\.]+) fps$/', $line, $matches): {
-                            $title->setDisplayInfo(
-                                $matches['width'], $matches['height'], $matches['pixel_aspect'],
-                                $matches['display_aspect'], $matches['framerate']
-                            );
+                        case $mode == self::PM_TITLE && $track && preg_match('/^  \+ Default duration: [\d\.]+ \((?P<framerate>[\d\.]+ fps for a video track)\)$/', $line, $matches): {
+                            $title->setFramerate($matches['framerate']);
                         } break;
                         
-                        case $title && $mode == self::PM_TITLE && preg_match('/^  \+ autocrop: (?P<autocrop>(?:\d+\/?){4})$/', $line, $matches): {
-                            $title->setAutocrop($matches['autocrop']);
+                        case $mode == self::PM_TITLE && $track && preg_match('/^   \+ Pixel width: (?P<width>\d+)$/', $line, $matches): {
+                            $title->setWidth($matches['width']);
+                        } break;
+                        
+                        case $mode == self::PM_TITLE && $track && preg_match('/^   \+ Pixel height: (?P<height>\d+)$/', $line, $matches): {
+                            $title->setHeight($matches['height']);
                         } break;
                         
                         case $title && $mode == self::PM_CHAPTER && preg_match('/^    \+ (?P<id>\d+): cells \d+->\d+, \d+ blocks, duration (?P<duration>\d+:\d+:\d+)$/', $line, $matches): {
@@ -155,19 +188,13 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
                     }
                 }
                 
-                // Handle the last title found as a special case
-                if ($title) {
-                    $source->addTitle($title);
-                }
-    
-                // If requested, store the new source object in the cache
-                if ($use_cache) {
-                    $source->cache();
-                }
+            }
+            
+            // If requested, store the new source object in the cache
+            if ($use_cache) {
+                $source->cache();
             }
         }
-
-        return $source;
     }
     
     /**
@@ -204,17 +231,17 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
         }
         $real_source_filename = realpath($source_filename);
         
-        // Check all of the source directories specified in the config
-        $source_directories = $config->get('source.handbrake.dir');
-        foreach ($source_directories as $source_basedir) {
+            // Check all of the source directories specified in the config
+        $source_directories = $config->get(self::CONFIG_SOURCE_DIR);
+        foreach ($source_directories as $source_basedir) { 
             $real_source_basedir = realpath($source_basedir);
             
-            if (substr($real_source_filename, 0, strlen($real_source_basedir)) == $real_source_basedir) {
-                return true;
+            if (substr($real_source_filename, 0, strlen($real_source_basedir)) != $real_source_basedir) {
+                return false;
             }
         }
         
-        return false;
+        return true;
     }
     
 }

@@ -18,12 +18,20 @@ class RippingCluster_Source {
         $this->plugin   = $plugin;
     }
     
-    public static function isCached($source_filename) {
+    public static function isSourceCached($source_filename) {
         $main   = RippingCluster_Main::instance();
         $cache  = $main->cache();
         $config = $main->config();
 
         return $cache->exists($source_filename, $config->get('rips.cache_ttl'));
+    }
+    
+    public function isCached() {
+        $main   = RippingCluster_Main::instance();
+        $cache  = $main->cache();
+        $config = $main->config();
+
+        return $cache->exists($this->filename, $config->get('rips.cache_ttl'));
     }
     
     public function cache() {
