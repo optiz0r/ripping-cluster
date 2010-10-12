@@ -1,8 +1,9 @@
 <?php
 
-class RippingCluster_Utility_DvdDirectoryIterator extends FilterIterator {
+class RippingCluster_Utility_BlurayDirectoryIterator extends FilterIterator {
     public function accept() {
-        return true; // TODO Determine if the current directory item represents a Bluray source or not
+        return is_dir($this->current()->getPathname() . DIRECTORY_SEPARATOR . 'BDAV') ||
+               is_dir($this->current()->getPathname() . DIRECTORY_SEPARATOR . 'BDMV');
     }
 }
 
