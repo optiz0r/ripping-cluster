@@ -14,6 +14,13 @@ class RippingCluster_Source_Plugin_MkvInfo extends RippingCluster_PluginBase imp
      */
     const CONFIG_SOURCE_DIR = 'source.mkvinfo.dir';
     
+    const PM_HEADERS  = 0;
+    const PM_TRACK    = 1;
+    const PM_TITLE    = 2;
+    const PM_CHAPTER  = 3;
+    const PM_AUDIO    = 4;
+    const PM_SUBTITLE = 5;
+    
     /**
      * Returns a list of all Sources discovered by this plugin.
      * 
@@ -55,6 +62,7 @@ class RippingCluster_Source_Plugin_MkvInfo extends RippingCluster_PluginBase imp
      */
     public static function load($source_filename, $scan = true, $use_cache = true) {
         $cache = RippingCluster_Main::instance()->cache();
+        $config = RippingCluster_Main::instance()->config();
 
         // Ensure the source is a valid directory, and lies below the configured source_dir
         if ( ! self::isValidSource($source_filename)) {
@@ -67,7 +75,120 @@ class RippingCluster_Source_Plugin_MkvInfo extends RippingCluster_PluginBase imp
         } else {
             $source = new RippingCluster_Source($source_filename, self::name(), true);
            
-            // TODO Populate source object with content
+            if ($scan) {
+                $cmd = escapeshellcmd($config->get('source.mkvinfo.bin')) . ' ' . escapeshellarg($source_filename);
+                list($retval, $output, $error) = RippingCluster_ForegroundTask::execute($cmd);
+                
+                // Process the output
+                $lines = explode("\n", $output);
+                $track = null;
+                $track_details = null;
+                $duration = null;
+                $mode = self::PM_HEADERS;
+                
+                foreach ($lines as $line) {
+                    // Skip any line that doesn't begin with a |+ (with optional whitespace)
+                    if ( ! preg_match('/^|\s*\+/', $line)) {
+                        continue;
+                    }
+        
+                    $matches = array();
+                    switch (true) {
+                        
+                        case $mode == self::PM_HEADERS && preg_match('/^| \+ Duration: [\d\.]+s ([\d:]+])$/', $line, $matches): {
+                            $duration = $matches['duration'];
+                        } break;
+                        
+                        case preg_match('/^| \+ A track$/', $line, $matches): {
+                            $mode = self::PM_TRACK;
+                            $track_details = array();
+                        } break;
+                        
+                        case $mode == self::PM_TRACK && preg_match('/^|  \+ Track number: (?P<id>\d+):$/', $line, $matches): {
+                            $track_details['id'] = $matches['id'];
+                        } break;
+                        
+                        case $mode == self::PM_TRACK && preg_match('/^|  \+ Track type: (?P<type>.+)$/', $line, $matches): {
+                            switch ($type) {
+                                case 'video': {
+                                    $mode = self::PM_TITLE;
+                                    $track = new RippingCluster_Rips_SourceTitle($track_details['id']);
+                                    $track->setDuration($duration);
+                                } break;
+                                
+                                case 'audio': {
+                                    $mode = self::PM_AUDIO;
+                                    $track = new RippingCluster_Rips_SourceAudioTrack($track_details['id']);
+                                } break;
+                                
+                                case 'subtitles': {
+                                    $mode = self::PM_SUBTITLE;
+                                    $track = new RippingCluster_Rips_SourceSubtitleTrack($track_details['id']);
+                                } break;
+                            }
+                        } break;
+                        
+                        case $mode == self::PM_AUDIO && $track && preg_match('/^|  \+ Codec ID: (?P<codec>.+)$/', $line, $matches): {
+                            $track->setFormat($matches['codec']);
+                        } break;
+                        
+                        case $mode == self::PM_AUDIO && $track && preg_match('/^|  \+ Language: (?P<language>.+)$/', $line, $matches): {
+                            $track->setLanguage($matches['language']);
+                        } break;
+                        
+                        case $mode == self::PM_AUDIO && $track && preg_match('/^|   \+ Sampling frequency: (?P<samplerate>.+)$/', $line, $matches): {
+                            $track->setSampleRate($matches['samplerate']);
+                        } break;
+                        
+                        case $mode == self::PM_AUDIO && $track && preg_match('/^|   \+ Channels: (?P<channels>.+)$/', $line, $matches): {
+                            $track->setFormat($matches['channels']);
+                        } break;
+                        
+                        case $mode == self::PM_SUBTITLE && $track && preg_match('/^|  \+ Language: (?P<language>.*)$/', $line): {
+                            $track->setLanguage($matches['language']);
+                        } break;
+                        
+                        case $mode == self::PM_TITLE && $track && preg_match('/^  \+ Default duration: [\d\.]+ \((?P<framerate>[\d\.]+ fps for a video track)\)$/', $line, $matches): {
+                            $title->setFramerate($matches['framerate']);
+                        } break;
+                        
+                        case $mode == self::PM_TITLE && $track && preg_match('/^   \+ Pixel width: (?P<width>\d+)$/', $line, $matches): {
+                            $title->setWidth($matches['width']);
+                        } break;
+                        
+                        case $mode == self::PM_TITLE && $track && preg_match('/^   \+ Pixel height: (?P<height>\d+)$/', $line, $matches): {
+                            $title->setHeight($matches['height']);
+                        } break;
+                        
+                        case $title && $mode == self::PM_CHAPTER && preg_match('/^    \+ (?P<id>\d+): cells \d+->\d+, \d+ blocks, duration (?P<duration>\d+:\d+:\d+)$/', $line, $matches): {
+                            $title->addChapter($matches['id'], $matches['duration']);
+                        } break;
+        
+                        case $title && $mode == self::PM_AUDIO && preg_match('/^    \+ (?P<id>\d+), (?P<name>.+) \((?P<format>.+)\) \((?P<channels>(.+ ch|Dolby Surround))\) \((?P<language>.+)\), (?P<samplerate>\d+)Hz, (?P<bitrate>\d+)bps$/', $line, $matches): {
+                            $title->addAudioTrack(
+                                new RippingCluster_Rips_SourceAudioTrack(
+                                    $matches['id'], $matches['name'], $matches['format'], $matches['channels'],
+                                    $matches['language'], $matches['samplerate'], $matches['bitrate']
+                                )
+                            );
+                        } break;
+                        
+                        case $title && $mode == self::PM_SUBTITLE && preg_match('/^    \+ (?P<id>\d+), (?P<name>.+) \((?P<language>.+)\) \((?P<format>.+)\)$/', $line, $matches): {
+                            $title->addSubtitleTrack(
+                                new RippingCluster_Rips_SourceSubtitleTrack(
+                                    $matches['id'], $matches['name'], $matches['language'], $matches['format']
+                                )
+                            );
+                        } break;
+                        
+                        default: {
+                            // Ignore this unmatched line
+                        } break;
+        
+                    }
+                }
+                
+            }
             
             // If requested, store the new source object in the cache
             if ($use_cache) {
