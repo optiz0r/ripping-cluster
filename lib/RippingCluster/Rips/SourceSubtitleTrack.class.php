@@ -22,12 +22,24 @@ class RippingCluster_Rips_SourceSubtitleTrack {
 		return $this->name;
 	}
 	
+	public function setName($name) {
+	    $this->name = $name;
+	}
+	
 	public function language() {
 		return $this->language;
 	}
 	
+	public function setLanguage($language) {
+	    $this->language = $language;
+	}
+	
 	public function format() {
 		return $this->format;
+	}
+	
+	public function setFormat($format) {
+	    $this->format = $format;
 	}
 	
 };

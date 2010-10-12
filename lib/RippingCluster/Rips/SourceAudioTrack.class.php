@@ -28,24 +28,48 @@ class RippingCluster_Rips_SourceAudioTrack {
 		return $name;
 	}
 	
+	public function setName($name) {
+	    $this->name = $name;
+	}
+	
 	public function format() {
 		return $this->format;
+	}
+	
+	public function setFormat($format) {
+	    $this->format = $format;
 	}
 	
 	public function channels() {
 		return $this->channels;
 	}
 	
+	public function setChannels($channels) {
+	    $this->channels = $channels;
+	}
+	
 	public function language() {
 		return $this->language;
+	}
+	
+	public function setLanguage($language) {
+	    $this->language = $language;
 	}
 	
 	public function samplerate() {
 		return $this->samplerate;
 	}
 	
+	public function setSampleRate($sample_rate) {
+	    $this->samplerate = $sample_rate;
+	}
+	
 	public function bitrate() {
 		return $this->bitrate;
+	}
+	
+	public function setBitRate($bit_rate) {
+	    $this->bitrate = $bit_rate;
 	}
 	
 };
