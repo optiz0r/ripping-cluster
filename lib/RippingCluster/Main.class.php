@@ -169,6 +169,21 @@ class RippingCluster_Main {
         return true;
     }
     
+    public static function rmdir_recursive($dir) { 
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (filetype($dir."/".$object) == "dir") self::rmdir_recursive($dir."/".$object); else unlink($dir."/".$object); 
+                }
+            }
+            reset($objects); 
+            rmdir($dir);
+        }
+        
+        return true;
+    } 
+    
     public static function issetelse($var, $default = null) {
         if (isset($var)) {
             return $var;

@@ -67,6 +67,22 @@ class RippingCluster_Source_PluginFactory extends RippingCluster_PluginFactory {
         return call_user_func(array(self::classname($plugin), 'isValidSource'), source_filename);
     }
     
+    /**
+     * Permanently deletes the given source from disk
+     *
+     * @param string $plugin Name of the plugin used to load the source
+     * @param string $source_filename Filename of the source to be deleted
+     */
+    public static function delete($plugin, $source_filename) {
+        self::ensureScanned();
+        
+        if ( ! self::isValidPlugin($plugin)) {
+            return null;
+        }
+        
+        return call_user_func(array(self::classname($plugin), 'delete'), $source_filename);
+    }
+    
 }
 
 ?>

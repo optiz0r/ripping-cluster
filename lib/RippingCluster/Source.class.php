@@ -104,6 +104,14 @@ class RippingCluster_Source {
 
         return $longest_index;
     }
+    
+    /**
+     * Permanently deletes this source from disk
+	 *
+     */
+    public function delete() {
+        RippingCluster_Source_PluginFactory::delete($this->plugin, $this->filename);
+    }
 	
     public function filename() {
         return $this->filename;

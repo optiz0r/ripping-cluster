@@ -20,7 +20,8 @@
 						{assign var='source_cached' value="$source->isCached()}
 						<li>
 							[ <a href="{$base_uri}rips/source-details/plugin/{$source_plugin}/id/{$source_filename_encoded}" title="Browse source details">Browse</a> |
-				  			<a href="{$base_uri}rips/setup-rip/plugin/{$source_plugin}/id/{$source_filename_encoded}" title="Rip this source">Rip</a> ]
+				  			<a href="{$base_uri}rips/setup-rip/plugin/{$source_plugin}/id/{$source_filename_encoded}" title="Rip this source">Rip</a> |
+				  			<a href="{$base_uri}sources/delete/plugin/{$source_plugin}/id/{$source_filename_encoded}" title="Delete this source">Delete</a> ]
 							{$source_filename|escape:'html'}{if $source_cached} (cached){/if}
 						</li>
 					{/foreach}

@@ -217,6 +217,21 @@ class RippingCluster_Source_Plugin_HandBrake extends RippingCluster_PluginBase i
         return false;
     }
     
+    /**
+     * Permanently deletes the given source from disk
+     * 
+     * @param RippingCluster_Source $source Source object to be deleted
+     * @return bool
+     */
+    public static function delete($source_filename) {
+        if ( ! self::isValidSource($source_filename)) {
+            return false;
+        }
+        
+        return RippingCluster_Main::rmdir_recursive($source_filename);
+    }
+    
+    
 }
 
 ?>

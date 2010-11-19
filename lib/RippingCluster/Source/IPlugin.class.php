@@ -41,12 +41,20 @@ interface RippingCluster_Source_IPlugin extends RippingCluster_IPlugin {
     public static function loadEncoded($encoded_filename, $scan = true, $use_cache = true);
     
     /**
-     * Determins if a filename is a valid source loadable using this plugin
+     * Determines if a filename is a valid source loadable using this plugin
      * 
      * @param string $source_filename Filename of the source
      * @return bool
      */
     public static function isValidSource($source_filename);
+    
+    /**
+     * Permanently deletes the given source from disk
+     * 
+     * @param RippingCluster_Source $source Source object to be deleted
+     * @return bool
+     */
+    public static function delete($source_filename);
     
 }
 
