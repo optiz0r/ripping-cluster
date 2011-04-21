@@ -6,8 +6,8 @@ require_once '../private/config.php';
 require_once(SihnonFramework_Lib . 'SihnonFramework/Main.class.php');
 require_once 'Net/Gearman/Client.php';
 
-SihnonFramework_Main::registerAutoloadClasses('Sihnon', SihnonFramework_Lib,
-												'RippingCluster', SihnonFramework_Main::makeAbsolutePath('../lib/'));
+SihnonFramework_Main::registerAutoloadClasses('SihnonFramework', SihnonFramework_Lib,
+												'RippingCluster', SihnonFramework_Main::makeAbsolutePath('../source/lib/'));
 
 try {
     $main = RippingCluster_Main::instance();

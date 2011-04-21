@@ -6,7 +6,7 @@ $config = $main->config();
 
 // Grab the name of this source
 $encoded_filename = null;
-if ($req->get('submit')) {
+if ($req->exists('submit')) {
     $encoded_filename = RippingCluster_Main::issetelse($_POST['id'], 'RippingCluster_Exception_InvalidParameters');
 
     // Create the jobs from the request
@@ -17,7 +17,7 @@ if ($req->get('submit')) {
     
     RippingCluster_Page::redirect('rips/setup-rip/queued');
     
-} elseif ($req->get('queued')) {
+} elseif ($req->exists('queued')) {
     $this->smarty->assign('rips_submitted', true);
     
 } else {
