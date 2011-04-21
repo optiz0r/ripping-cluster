@@ -2,9 +2,11 @@
 
 class RippingCluster_Worker_PluginFactory extends RippingCluster_PluginFactory {
     
-    protected static $plugin_dir       = 'Net/Gearman/Job/';
     protected static $plugin_prefix    = 'Net_Gearman_Job_';
     protected static $plugin_interface = 'RippingCluster_Worker_IPlugin';
+    protected static $plugin_dir       = array(
+        RippingCluster_Lib => 'Net/Gearman/Job/',
+    );
     
     public static function init() {
         
