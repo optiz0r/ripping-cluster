@@ -64,7 +64,9 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
             $this->fail($return_val);
         } else {
             $this->job->updateStatus(RippingCluster_JobStatus::COMPLETE);
-            $this->complete();
+            $this->complete( array(
+                'id' => $this->job->id()
+            ));
         }
     }
     
