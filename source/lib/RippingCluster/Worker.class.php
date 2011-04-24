@@ -30,7 +30,8 @@ class RippingCluster_Worker {
        try {
            $this->gearman->beginWork();
        } catch (Net_Gearman_Exception $e) {
-           // Do stuff
+           RippingCluster_WorkerLogEntry::error(SihnonFramework_Main::instance()->log(), 0, $e->toText());
+           return false;
        }
         
         return true;
