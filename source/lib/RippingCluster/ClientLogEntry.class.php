@@ -1,38 +1,23 @@
 <?php
 
 class RippingCluster_ClientLogEntry extends RippingCluster_LogEntry {
-    
-    protected $jobId;
-    
-    protected function __construct($id, $level, $ctime, $pid, $hostname, $progname, $line, $message, $jobId) {
-        parent::__construct($id, $level, $ctime, $pid, $hostname, $progname, $line, $message);
-        
-        $this->jobId = $jobId;
-    }
-    
-    public static function fromDatabaseRow($row) {
-        return new self(
-            $row['id'],
-            $row['level'],
-            $row['ctime'],
-            $row['pid'],
-            $row['hostname'],
-            $row['progname'],
-            $row['line'],
-            $row['message'],
-            $row['job_id']
-        );
+
+    public static function debug($logger, $job_id, $message) {
+        static::log($logger, SihnonFramework_Log::LEVEL_DEBUG, $job_id, $message, 'client');
     }
 
-    public static function initialise() {
-        parent::$table_name = 'client_log';
+    public static function info($logger, $job_id, $message) {
+        static::log($logger, SihnonFramework_Log::LEVEL_INFO, $job_id, $message, 'client');
     }
 
-    public function jobId() {
-        return $this->jobId;
+    public static function warning($logger, $job_id, $message) {
+        static::log($logger, SihnonFramework_Log::LEVEL_WARNING, $job_id, $message, 'client');
     }
+
+    public static function error($logger, $job_id, $message) {
+        static::log($logger, SihnonFramework_Log::LEVEL_ERROR, $job_id, $message, 'client');
+    }
+    
 };
-
-RippingCluster_ClientLogEntry::initialise();
 
 ?>
