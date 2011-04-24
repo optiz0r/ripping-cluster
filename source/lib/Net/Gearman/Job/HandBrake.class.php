@@ -53,10 +53,10 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
             $handbrake_cmd[] = escapeshellarg($value);
         }
         $handbrake_cmd = join(' ', $handbrake_cmd);
-        $log->debug($handbrake_cmd, $this->job->id());
+        RippingCluster_LogEntry::debug($log, $this->job->id(), $handbrake_cmd, 'worker');
         
         // Change the status of this job to running
-        $log->debug("Setting status to Running", $this->job->id());
+        RippingCluster_LogEntry::debug($log, $this->job->id(), "Setting status to Running", 'worker');
         $this->job->updateStatus(RippingCluster_JobStatus::RUNNING, 0);
 
         list($return_val, $stdout, $stderr) = RippingCluster_ForegroundTask::execute($handbrake_cmd, null, null, null, array($this, 'callbackOutput'), array($this, 'callbackOutput'), $this);
@@ -110,7 +110,7 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
                 $this->status($matches[1], 100);
             } else {
                 $log = RippingCluster_Main::instance()->log();
-                $log->debug($line, $rip->job->id());
+                RippingCluster_LogEntry::debug($log, $rip->job->id(), $line, 'worker');
             }
         }
     }
