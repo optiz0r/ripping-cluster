@@ -14,7 +14,7 @@ try {
     $config = $main->config();
     $log = $main->log();
     
-    $client = new Net_Gearman_Client('river.sihnon.net:4730');//$config->get('rips.job_servers'));
+    $client = new Net_Gearman_Client($config->get('rips.job_servers'));
     $set    = new Net_Gearman_Set();
     
     // Retrieve a list of Created jobs
@@ -34,7 +34,7 @@ try {
     // Start the job queue
     $result = $client->runSet($set);
         
-    $log->info("Job queue completed");
+    RippingCluster_LogEntry::info($log, 'Job queue completed', 'batch');
     
 } catch (RippingCluster_Exception $e) {
     die("Uncaught Exception (" . get_class($e) . "): " . $e->getMessage() . "\n");
@@ -46,7 +46,7 @@ function gearman_complete($method, $handle, $result) {
     $log = $main->log();
     
     /*$log->info("Job Complete", $job->id());*/
-    $log->info("Job complete");
+    RippingCluster_LogEntry::info($log, 'Job complete', 'batch');
 }
 
 function gearman_fail($task) {
@@ -57,7 +57,7 @@ function gearman_fail($task) {
     $job->updateStatus(RippingCluster_JobStatus::FAILED);
     
     $log->info("Job Failed", $job->id());*/
-    $log->info("Job failed");
+    RippingCluster_LogEntry::info($log, 'Job failed', 'batch');
 }
 
 
