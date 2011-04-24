@@ -6,7 +6,7 @@ $config = $main->config();
 
 // Grab the name of this source
 $encoded_filename = null;
-if ($req->get('confirm')) {
+if ($req->exists('confirm')) {
     $plugin = $req->get('plugin', 'RippingCluster_Exception_InvalidParameters');
     $encoded_filename = $req->get('id', 'RippingCluster_Exception_InvalidParameters');
     
