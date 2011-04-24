@@ -135,7 +135,7 @@ class RippingCluster_Job {
             $params[] = array('name' => 'limit',  'value' => $limit,  'type' => PDO::PARAM_INT);
         }
         
-        foreach ($database->selectList("SELECT * FROM jobs WHERE id IN (SELECT job_id FROM job_status_current WHERE id > 0 AND status=:status) ORDER BY id {$limitSql}", $params) as $row) {
+        foreach ($database->selectList("SELECT * FROM jobs WHERE id IN (SELECT job_id FROM job_status_current WHERE id > 0 AND status=:status) ORDER BY id DESC {$limitSql}", $params) as $row) {
             $jobs[] = self::fromDatabaseRow($row);
         }
 
@@ -332,7 +332,7 @@ class RippingCluster_Job {
     }
 
     public static function runAllJobs() {
-        RippingCluster_BackgroundTask::run('/usr/bin/php run-jobs.php');
+        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('run-jobs.php'));
     }
     
 };
