@@ -45,19 +45,20 @@ function gearman_complete($method, $handle, $result) {
     $main = RippingCluster_Main::instance();
     $log = $main->log();
     
-    /*$log->info("Job Complete", $job->id());*/
-    RippingCluster_LogEntry::info($log, 'Job complete', 'batch');
+    $job = RippingCluster_Job::fromId($result['id']);
+    $job->updateStatus(RippingCluster_JobStatus::COMPLETE);
+    
+    RippingCluster_ClientLogEntry::info($log, $job->id(), 'Job complete');
 }
 
 function gearman_fail($task) {
     $main = RippingCluster_Main::instance();
     $log = $main->log();
     
-    /*$job = RippingCluster_Job::fromId($gearman_task->unique());
+    $job = RippingCluster_Job::fromId($task->args['rip_options']['id']);
     $job->updateStatus(RippingCluster_JobStatus::FAILED);
     
-    $log->info("Job Failed", $job->id());*/
-    RippingCluster_LogEntry::info($log, 'Job failed', 'batch');
+    RippingCluster_ClientLogEntry::info($log, $job->id(), 'Job failed');
 }
 
 
