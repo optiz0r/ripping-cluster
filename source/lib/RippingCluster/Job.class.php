@@ -111,7 +111,7 @@ class RippingCluster_Job {
         $jobs = array();
 
         $database = RippingCluster_Main::instance()->database();
-        foreach ($database->selectList('SELECT * FROM jobs WHERE id > 0') as $row) {
+        foreach ($database->selectList('SELECT * FROM jobs WHERE id > 0 ORDER BY id DESC') as $row) {
             $job = self::fromDatabaseRow($row);
             
             self::$cache[$job->id] = $job;
@@ -212,7 +212,7 @@ class RippingCluster_Job {
         $database->update(
             'DELETE FROM jobs WHERE id=:job_id LIMIT 1',
             array(
-                array(name => 'job_id', value => $this->id, type => PDO::PARAM_INT),
+                array('name' => 'job_id', 'value' => $this->id, 'type' => PDO::PARAM_INT),
             )    
         );
 
