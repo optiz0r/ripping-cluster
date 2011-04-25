@@ -281,6 +281,7 @@ class RippingCluster_Job {
         $running_time = $current_status->mtime() - $current_status->ctime();
         $progress     = $current_status->ripProgress();
         
+        $remaining_time = 0;
         if ($progress > 0) {
             $remaining_time = round((100 - $progress) * ($running_time / $progress));
         }
