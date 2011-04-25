@@ -87,7 +87,7 @@ class RippingCluster_Source {
         }
         
         $longest_index = null;
-        $maximmum_duration = 0;
+        $maximum_duration = 0;
 
         if ( ! $this->titles) {
             return null;
