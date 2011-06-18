@@ -34,7 +34,7 @@ try {
     // Start the job queue
     $result = $client->runSet($set);
         
-    RippingCluster_LogEntry::info($log, 'Job queue completed', 'batch');
+    RippingCluster_ClientLogEntry::info($log, null, 'Job queue completed', 'batch');
     
 } catch (RippingCluster_Exception $e) {
     die("Uncaught Exception (" . get_class($e) . "): " . $e->getMessage() . "\n");
