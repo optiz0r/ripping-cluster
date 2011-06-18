@@ -2,7 +2,7 @@
 
 define('HBC_File', 'worker');
 
-require_once '../private/config.php';
+require_once '/etc/ripping-cluster/config.php';
 require_once(SihnonFramework_Lib . 'SihnonFramework/Main.class.php');
 require_once 'Net/Gearman/Worker.php';
 
