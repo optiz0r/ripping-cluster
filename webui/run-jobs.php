@@ -55,7 +55,7 @@ function gearman_fail($task) {
     $main = RippingCluster_Main::instance();
     $log = $main->log();
     
-    $job = RippingCluster_Job::fromId($task->args['rip_options']['id']);
+    $job = RippingCluster_Job::fromId($task->arg['rip_options']['id']);
     $job->updateStatus(RippingCluster_JobStatus::FAILED);
     
     RippingCluster_ClientLogEntry::info($log, $job->id(), 'Job failed');
