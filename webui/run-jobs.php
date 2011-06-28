@@ -2,12 +2,12 @@
 
 define('HBC_File', 'run-jobs');
 
-require_once '../private/config.php';
+require_once '/etc/ripping-cluster/config.php';
 require_once(SihnonFramework_Lib . 'SihnonFramework/Main.class.php');
 require_once 'Net/Gearman/Client.php';
 
 SihnonFramework_Main::registerAutoloadClasses('SihnonFramework', SihnonFramework_Lib,
-												'RippingCluster', SihnonFramework_Main::makeAbsolutePath('../source/lib/'));
+												'RippingCluster', RippingCluster_Lib);
 
 try {
     $main = RippingCluster_Main::instance();
@@ -34,7 +34,7 @@ try {
     // Start the job queue
     $result = $client->runSet($set);
         
-    RippingCluster_LogEntry::info($log, 'Job queue completed', 'batch');
+    RippingCluster_ClientLogEntry::info($log, null, 'Job queue completed', 'batch');
     
 } catch (RippingCluster_Exception $e) {
     die("Uncaught Exception (" . get_class($e) . "): " . $e->getMessage() . "\n");
@@ -55,7 +55,7 @@ function gearman_fail($task) {
     $main = RippingCluster_Main::instance();
     $log = $main->log();
     
-    $job = RippingCluster_Job::fromId($task->args['rip_options']['id']);
+    $job = RippingCluster_Job::fromId($task->arg['rip_options']['id']);
     $job->updateStatus(RippingCluster_JobStatus::FAILED);
     
     RippingCluster_ClientLogEntry::info($log, $job->id(), 'Job failed');

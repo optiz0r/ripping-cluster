@@ -1,5 +1,5 @@
 hostname = localhost
-username = handbrake
-password = handbrake
-dbname   = handbrake_cluster
+username = ripping
+password = ripping
+dbname   = ripping_cluster
 

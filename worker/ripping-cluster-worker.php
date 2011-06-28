@@ -2,13 +2,13 @@
 
 define('HBC_File', 'worker');
 
-require_once '../private/config.php';
+require_once '/etc/ripping-cluster/config.php';
 require_once(SihnonFramework_Lib . 'SihnonFramework/Main.class.php');
 require_once 'Net/Gearman/Worker.php';
 
 SihnonFramework_Main::registerAutoloadClasses('SihnonFramework', SihnonFramework_Lib,
-												'RippingCluster', SihnonFramework_Main::makeAbsolutePath('../source/lib/'));
-SihnonFramework_Main::registerAutoloadClasses('Net', SihnonFramework_Main::makeAbsolutePath('../source/lib/'));
+												'RippingCluster', SihnonFramework_Main::makeAbsolutePath(RippingCluster_Lib));
+SihnonFramework_Main::registerAutoloadClasses('Net', SihnonFramework_Main::makeAbsolutePath(RippingCluster_Lib));
 
 
 try {
