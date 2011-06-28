@@ -4,8 +4,16 @@ class RippingCluster_LogEntry extends SihnonFramework_LogEntry {
     
     protected $job_id;
     
+    protected static $types;
+    
     public static function initialise() {
-        self::$types['job_id'] = 'int'; 
+    	// Copy the list of datatypes from the parent
+    	// We can't modify it in place, else we'll break any logging done inside the SihnonFramework tree
+    	// or other subclass trees.
+    	static::$types = parent::$types;
+    	
+    	// Add the new data types for this subclass
+        static::$types['job_id'] = 'int'; 
     }
 
     protected function __construct($level, $category, $ctime, $pid, $file, $line, $message, $job_id) {
