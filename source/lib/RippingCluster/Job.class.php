@@ -271,7 +271,20 @@ class RippingCluster_Job {
         
         return $new_status;
     }
-
+    
+    public function isFinished() {
+        $current_status = $this->currentStatus()->status();
+        return ($current_status == RippingCluster_JobStatus::COMPLETE || $current_status == RippingCluster_JobStatus::FAILED);
+    }
+    
+    public function outputFilesize() {
+        if (file_exists($this->destination_filename)) {
+            return filesize($this->destination_filename);
+        }
+        
+        return null;
+    }
+    
     public function calculateETA() {
         $current_status = $this->currentStatus();
         if ($current_status->status() != RippingCluster_JobStatus::RUNNING) {

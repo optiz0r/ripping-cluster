@@ -18,13 +18,15 @@ class RippingCluster_Main extends SihnonFramework_Main {
 
         switch (HBC_File) {
             case 'index': {
+                $smarty_tmp = '/tmp/ripping-cluster';
                 $this->smarty = new Smarty();
-                $this->smarty->template_dir = './source/templates';
-                $this->smarty->compile_dir  = './tmp/templates';
-                $this->smarty->cache_dir    = './tmp/cache';
-                $this->smarty->config_dir   = './config';
+                $this->smarty->template_dir = static::makeAbsolutePath('./source/templates');
+                $this->smarty->compile_dir  = static::makeAbsolutePath($smarty_tmp . '/tmp/templates');
+                $this->smarty->cache_dir    = static::makeAbsolutePath($smarty_tmp . '/tmp/cache');
+                $this->smarty->config_dir   = static::makeAbsolutePath($smarty_tmp . '/config');
                  
                 $this->smarty->registerPlugin('modifier', 'formatDuration', array('RippingCluster_Main', 'formatDuration'));
+                $this->smarty->registerPlugin('modifier', 'formatFilesize', array('RippingCluster_Main', 'formatFilesize'));
 
                 $this->smarty->assign('version', '0.1');
                 $this->smarty->assign('messages', array());
