@@ -16,8 +16,8 @@ class RippingCluster_LogEntry extends SihnonFramework_LogEntry {
         static::$types['job_id'] = 'int'; 
     }
 
-    protected function __construct($level, $category, $ctime, $pid, $file, $line, $message, $job_id) {
-        parent::__construct($level, $category, $ctime, $pid, $file, $line, $message);
+    protected function __construct($level, $category, $ctime, $hostname, $progname, $pid, $file, $line, $message, $job_id) {
+        parent::__construct($level, $category, $ctime, $hostname, $progname, $pid, $file, $line, $message);
         
         $this->job_id = $job_id;
     }
@@ -27,6 +27,8 @@ class RippingCluster_LogEntry extends SihnonFramework_LogEntry {
             $row['level'],
             $row['category'],
             $row['ctime'],
+            $row['hostname'],
+            $row['progname'],
             $row['pid'],
             $row['file'],
             $row['line'],
@@ -40,8 +42,8 @@ class RippingCluster_LogEntry extends SihnonFramework_LogEntry {
             $this->level,
             $this->category,
             $this->ctime,
-            static::$hostname,
-            static::$progname,
+            $this->hostname,
+            $this->progname,
             $this->pid,
             $this->file,
             $this->line,
@@ -56,7 +58,7 @@ class RippingCluster_LogEntry extends SihnonFramework_LogEntry {
     
     protected static function log($logger, $severity, $job_id, $message, $category = SihnonFramework_Log::CATEGORY_DEFAULT) {
         $backtrace = debug_backtrace(false);
-        $entry = new self($severity, $category, time(), getmypid(), $backtrace[1]['file'], $backtrace[1]['line'], $message, $job_id);
+        $entry = new self($severity, $category, time(), static::$localHostname, static::$localProgname, getmypid(), $backtrace[1]['file'], $backtrace[1]['line'], $message, $job_id);
         
         $logger->log($entry);
     }
