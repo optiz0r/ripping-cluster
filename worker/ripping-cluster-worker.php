@@ -26,6 +26,7 @@ try {
     set_time_limit(0);
     
     $main = RippingCluster_Main::instance();
+    RippingCluster_LogEntry::setLocalProgname('ripping-cluster-worker');
     $smarty = $main->smarty();
 
     $worker = new RippingCluster_Worker();

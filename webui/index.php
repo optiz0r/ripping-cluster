@@ -6,6 +6,7 @@ require '_inc.php';
 
 try {
     $main = RippingCluster_Main::instance();
+    RippingCluster_LogEntry::setLocalProgname('webui');        	
     $smarty = $main->smarty();
     
     $page = new RippingCluster_Page($smarty, $main->request());
