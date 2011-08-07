@@ -30,11 +30,14 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
         
         $this->job = RippingCluster_Job::fromId($args['rip_options']['id']);
         
+        // Substitute a temporary output filename into the rip options
+        $args['temp_output_filename'] = tempnam($config->get('rips.temp_dir', '/tmp'), 'hbr_');  
+        
         $handbrake_cmd_raw = array(
             '-n', $config->get('rips.nice'),
             $config->get('rips.handbrake_binary'),
             self::evaluateOption($args['rip_options'], 'input_filename', '-i'),
-            self::evaluateOption($args['rip_options'], 'output_filename', '-o'),
+            self::evaluateOption($args, 'temp_output_filename', '-o'),
             self::evaluateOption($args['rip_options'], 'title'),
             self::evaluateOption($args['rip_options'], 'format', '-f'),
             self::evaluateOption($args['rip_options'], 'video_codec', '-e'),
@@ -61,12 +64,24 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
 
         list($return_val, $stdout, $stderr) = RippingCluster_ForegroundTask::execute($handbrake_cmd, null, null, null, array($this, 'callbackOutput'), array($this, 'callbackOutput'), $this);
         if ($return_val) {
+            // Remove any temporary output files
+            if (file_exists($args['temp_output_filename'])) {
+                unlink($args['temp_output_filename']);
+            }
             $this->fail($return_val);
         } else {
-            $this->job->updateStatus(RippingCluster_JobStatus::COMPLETE);
-            $this->complete( array(
-                'id' => $this->job->id()
-            ));
+            // Move the temporary output file to the desired destination
+            $move = rename($args['temp_output_filename'], $args['rip_options']['output_filename']);
+            if ($move) {
+                $this->job->updateStatus(RippingCluster_JobStatus::COMPLETE);
+                $this->complete( array(
+                	'id' => $this->job->id()
+                ));
+            } else {
+                RippingCluster_WorkerLogEntry::error($log, $this->job->id(), "Failed to move temporary output file to proper destination. File retained as '{$args['temp_output_filename']}'.");
+                $this->job->updateStatus(RippingCluster_JobStatus::FAILED);
+                $this->fail('-1');
+            }
         }
     }
     
