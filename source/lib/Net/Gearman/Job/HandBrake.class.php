@@ -66,19 +66,29 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
         if ($return_val) {
             // Remove any temporary output files
             if (file_exists($args['temp_output_filename'])) {
-                unlink($args['temp_output_filename']);
+                $result = unlink($args['temp_output_filename']);
+                if ($result) {
+                    RippingCluster_WorkerLogEntry::warning($log, $this->job->id(), "Failed to remove temporary output file, still exists at '{$args['temp_output_filename']}'.");
+                }
             }
             $this->fail($return_val);
         } else {
-            // Move the temporary output file to the desired destination
-            $move = rename($args['temp_output_filename'], $args['rip_options']['output_filename']);
+            // Copy the temporary output file to the desired destination
+            $move = copy($args['temp_output_filename'], $args['rip_options']['output_filename']);
             if ($move) {
+                // Remove the temporary output file
+                $result = unlink($args['temp_output_filename']);
+                if ($result) {
+                    RippingCluster_WorkerLogEntry::warning($log, $this->job->id(), "Failed to remove temporary output file, still exists at '{$args['temp_output_filename']}'.");
+                }
+                                
+                //Report success
                 $this->job->updateStatus(RippingCluster_JobStatus::COMPLETE);
                 $this->complete( array(
                 	'id' => $this->job->id()
                 ));
             } else {
-                RippingCluster_WorkerLogEntry::error($log, $this->job->id(), "Failed to move temporary output file to proper destination. File retained as '{$args['temp_output_filename']}'.");
+                RippingCluster_WorkerLogEntry::error($log, $this->job->id(), "Failed to copy temporary output file to proper destination. File retained as '{$args['temp_output_filename']}'.");
                 $this->job->updateStatus(RippingCluster_JobStatus::FAILED);
                 $this->fail('-1');
             }
