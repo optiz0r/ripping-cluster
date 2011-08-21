@@ -67,18 +67,18 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
             // Remove any temporary output files
             if (file_exists($args['temp_output_filename'])) {
                 $result = unlink($args['temp_output_filename']);
-                if ($result) {
+                if (!$result) {
                     RippingCluster_WorkerLogEntry::warning($log, $this->job->id(), "Failed to remove temporary output file, still exists at '{$args['temp_output_filename']}'.");
                 }
             }
-            $this->fail($return_val);
+            $this->fail("Call to HandBrake failed with return code {$return_val}.");
         } else {
             // Copy the temporary output file to the desired destination
             $move = copy($args['temp_output_filename'], $args['rip_options']['output_filename']);
             if ($move) {
                 // Remove the temporary output file
                 $result = unlink($args['temp_output_filename']);
-                if ($result) {
+                if (!$result) {
                     RippingCluster_WorkerLogEntry::warning($log, $this->job->id(), "Failed to remove temporary output file, still exists at '{$args['temp_output_filename']}'.");
                 }
                                 
@@ -90,7 +90,7 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
             } else {
                 RippingCluster_WorkerLogEntry::error($log, $this->job->id(), "Failed to copy temporary output file to proper destination. File retained as '{$args['temp_output_filename']}'.");
                 $this->job->updateStatus(RippingCluster_JobStatus::FAILED);
-                $this->fail('-1');
+                $this->fail('Encode complete, but output file could not be copied to the correct place.');
             }
         }
     }
@@ -133,7 +133,7 @@ class Net_Gearman_Job_HandBrake extends Net_Gearman_Job_Common implements Rippin
                 $status = $rip->job->currentStatus();
                 $status->updateRipProgress($matches[1]);
                 $this->status($matches[1], 100);
-            } else {
+            } else if (!preg_match('/^\s+$/', $line)) {
                 $log = RippingCluster_Main::instance()->log();
                 RippingCluster_WorkerLogEntry::debug($log, $rip->job->id(), $line);
             }
