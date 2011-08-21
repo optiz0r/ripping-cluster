@@ -29,7 +29,11 @@ try {
         $set->addTask($task);
         
         $job->updateStatus(RippingCluster_JobStatus::QUEUED);
+        RippingCluster_ClientLogEntry::info($log, $rip_options['id'], 'Job queued', 'client');
     }
+    
+    $job_count = count($jobs);
+    RippingCluster_ClientLogEntry::info($log, null, "Job queue started with {$job_count} jobs.", 'batch');
     
     // Start the job queue
     $result = $client->runSet($set);
@@ -58,7 +62,7 @@ function gearman_fail($task) {
     $job = RippingCluster_Job::fromId($task->arg['rip_options']['id']);
     $job->updateStatus(RippingCluster_JobStatus::FAILED);
     
-    RippingCluster_ClientLogEntry::info($log, $job->id(), 'Job failed');
+    RippingCluster_ClientLogEntry::info($log, $job->id(), "Job failed with message: {$task->result}");
 }
 
 
