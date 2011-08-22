@@ -10,7 +10,7 @@
 {else}
     <h3>{$source->filename()|escape:"html"}</h3>
 			
-	<form name="setup-rips" id="setup-rips" action="{$base_uri}rips/setup-rip/submit/" method="post">
+	<form name="setup" id="setup-rips" action="{$base_uri}rips/setup/submit/" method="post">
 		<input type="hidden" name="plugin" value="{$source->plugin()|escape:"html"}" />
 		<fieldset>
 			<legend>Configure global rip options</legend>
