@@ -17,6 +17,7 @@ class RippingCluster_Main extends SihnonFramework_Main {
         $this->request  = new RippingCluster_RequestParser($request_string);
 
         switch (HBC_File) {
+            case 'ajax':
             case 'index': {
                 $smarty_tmp = '/tmp/ripping-cluster';
                 $this->smarty = new Smarty();
@@ -32,6 +33,8 @@ class RippingCluster_Main extends SihnonFramework_Main {
                 $this->smarty->assign('messages', array());
                  
                 $this->smarty->assign('base_uri', $this->base_uri);
+                $this->smarty->assign('base_url', static::absoluteUrl(''));
+                
             } break;
 
         }

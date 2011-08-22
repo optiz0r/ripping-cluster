@@ -15,7 +15,7 @@ if ($req->exists('submit')) {
     // Spawn the background client process to run all the jobs
     RippingCluster_Job::runAllJobs();
     
-    RippingCluster_Page::redirect('rips/setup-rip/queued');
+    RippingCluster_Page::redirect('rips/setup/queued');
     
 } elseif ($req->exists('queued')) {
     $this->smarty->assign('rips_submitted', true);
