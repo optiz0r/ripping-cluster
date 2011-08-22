@@ -4,8 +4,18 @@
 
 <em>Summary details here</em>
 
-<h3>Recent Client Logs</h3>
+<h3>Log messages</h3>
+<h4>Options</h4>
+<ul>
+    {if $log_count_display eq 'all'}
+        <li><a href="{$base_uri}jobs/details/id/{$job->id()}/order/{$log_order}/" title="View recent logs only">View recent messages only</a></li>
+    {else}
+        <li><a href="{$base_uri}jobs/details/id/{$job->id()}/logs/all/" title="View all logs">View all messages</a></li>
+    {/if}
+    <li><a href="{$base_uri}jobs/details/id/{$job->id()}/logs/{$log_count_display}/order/{$log_order_reverse}/" title="Reverse display order of log messages">Reverse display order</a></li>
+</ul>
 
+<h4>Recent Client Logs</h4>
 {if $client_log_entries}
     <table>
         <thead>
@@ -30,8 +40,7 @@
 {/if}
 
 
-<h3>Recent Worker Logs</h3>
-
+<h4>Recent Worker Logs</h4>
 {if $worker_log_entries}
     <table>
         <thead>
