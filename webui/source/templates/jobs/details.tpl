@@ -70,6 +70,7 @@
             <tr>
                 <th>Level</th>
                 <th>Time</th>
+                <th>Hostname</th>
                 <th>Message</th>
             </tr>
         </thead>
@@ -78,6 +79,7 @@
                 <tr>
                     <td>{$log_entry->level()}</td>
                     <td>{$log_entry->ctime()|date_format:"%Y-%m-%d %H:%M:%S"}</td>
+                    <td>{$log_entry->hostname()}</td>
                     <td>{$log_entry->message()}</td>
                 </tr>
             {/foreach}
