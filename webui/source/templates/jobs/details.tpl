@@ -2,7 +2,30 @@
 
 <h3>Summary</h3>
 
-<em>Summary details here</em>
+<dl>
+    <dt>Source Plugin</dt>
+    <dd>{$job->sourcePlugin()}</dd>
+    
+    <dt>Rip Plugin</dt>
+    <dd>{$job->ripPlugin()}</dd>
+    
+    <dt>Source Filename</dt>
+    <dd>{$job->sourceFilename()}</dd>
+    
+    <dt>Source Title</dt>
+    <dd>{$job->title()}</dd>
+    
+    <dt>Status</dt>
+    <dd>{$job->currentStatus()->statusName()} ({$job->currentStatus()->mtime()|date_format:'%Y-%m-%d %H:%M:%S'})</dd>
+    
+    <dt>Destination Filename</dt>
+    <dd>{$job->destinationFilename()}</dd>
+    
+    {if $job->isFinished()}
+        <dt>Destination Filesize</dt>
+        <dd>{$job->outputFilesize()|formatFilesize}</dd>
+    {/if}
+</dl>
 
 <h3>Log messages</h3>
 <h4>Options</h4>
