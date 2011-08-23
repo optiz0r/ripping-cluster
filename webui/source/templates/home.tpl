@@ -4,7 +4,7 @@
 
 {if $running_jobs}
         {foreach from=$running_jobs item=job}
-            <li><a href="{$base_uri}job-details/id/{$job->id()}" title="View job details">{$job->name()} ({$job->currentStatus()->ripProgress()}%)</a></li>
+            <li><a href="{$base_uri}jobs/details/id/{$job->id()}" title="View job details">{$job->name()} ({$job->currentStatus()->ripProgress()}%)</a></li>
         {/foreach}
 {else}
     <em>There are no currently running jobs.</em>
@@ -14,7 +14,7 @@
 
 {if $queued_jobs}
         {foreach from=$queued_jobs item=job}
-            <li><a href="{$base_uri}job-details/id/{$job->id()}" title="View job details">{$job->name()}</a></li>
+            <li><a href="{$base_uri}jobs/details/id/{$job->id()}" title="View job details">{$job->name()}</a></li>
         {/foreach}
 {else}
     <em>There are no currently running jobs.</em>
@@ -25,7 +25,7 @@
 {if $completed_jobs}
     <ul>
         {foreach from=$completed_jobs item=job}
-            <li><a href="{$base_uri}job-details/id/{$job->id()}" title="View job details">{$job->name()}</a></li>
+            <li><a href="{$base_uri}jobs/details/id/{$job->id()}" title="View job details">{$job->name()}</a></li>
         {/foreach}
     </ul>
 {else}
@@ -37,7 +37,7 @@
 {if $failed_jobs}
     <ul>
         {foreach from=$failed_jobs item=job}
-            <li><a href="{$base_uri}job-details/id/{$job->id()}" title="View job details">{$job->name()}</a></li>
+            <li><a href="{$base_uri}jobs/details/id/{$job->id()}" title="View job details">{$job->name()}</a></li>
         {/foreach}
     </ul>
 {else}
