@@ -2,7 +2,7 @@
 	{if $messages}
 		messages: [
 		{foreach from=$messages item=message}
-			'{$message}',
+			'{$message|json_encode}',
 		{/foreach}
 		],
 	{/if}

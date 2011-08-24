@@ -23,7 +23,8 @@ var rc = {
         },
         
         post: function(url, data) {
-            $.ajax(url, {
+            $.ajax({
+                url: url,
                 type: "POST", 
                 dataType: "json",
                 data: data,
@@ -134,6 +135,68 @@ var rc = {
         } else {
             console.log("Action not supported: " +action);
         }
+    },
+    
+    settings: {
+        
+        init: function() {
+            $("#settings_save").click(
+                function() {
+                    rc.settings.save();
+                }
+            );
+        },
+        
+        add_stringlist_field: function(id) {
+            var container = $('#container_'+id);
+            var next = $('#settings_'+id+'_next');
+            var next_value = next.val();
+            
+            var line = $('<div>');
+            line.attr('id', 'settings_'+id+'_line'+next.val());
+            line.append($('<input type="text" class="settings_field_string" />'));
+            line.append(' ');
+            var button = $('<input type="button" value="-" class="settings_field_remove"/>');
+            button.click(function() {
+                rc.settings.remove_field(id, next_value);
+            });
+            line.append(button);
+            
+            // Add the new item
+            container.append(line);
+            
+            // Increment the next counter
+            next.val(parseInt(next_value)+1);
+            
+        },
+    
+        remove_field: function(id, line) {
+            $("#settings_"+id+"_line"+line).remove();
+        }, 
+        
+        save: function() {
+            
+            var settings = {};
+            
+            var fields = $("input.setting").get();
+            for (var i in fields) {
+                var setting = fields[i];
+                var name = setting.name;
+                
+                if (/\[\]$/.test(name)) {
+                    if (! settings[name]) {
+                        settings[name] = [];
+                    }
+                    settings[name].push(setting.value);
+                } else { 
+                    settings[name] = setting.value;
+                }                    
+            }
+              
+            rc.ajax.post(base_url + "ajax/update-settings/", settings);
+            
+        }
+        
     }
      
 };
