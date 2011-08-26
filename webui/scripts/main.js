@@ -178,7 +178,7 @@ var rc = {
             
         },
     
-        remove_field: function(id, line) {
+        remove_stringlist_field: function(id, line) {
             $("#settings_"+id+"_line"+line).remove();
         }, 
         

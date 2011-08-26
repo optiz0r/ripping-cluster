@@ -28,7 +28,7 @@
                                 {foreach from=$value item=line name=settings}
                                     <div id="settings_{$id}_line{$smarty.foreach.settings.iteration}">
                                         <input type="text" name="{$id}[]" value="{$line}" class="setting settings_field_string" />
-                                        <input type="button" value="-" class="settings_field_remove" onclick="rc.settings.remove_field('{$id}', '{$smarty.foreach.settings.iteration}')" />
+                                        <input type="button" value="-" class="settings_field_remove" onclick="rc.settings.remove_stringlist_field('{$id}', '{$smarty.foreach.settings.iteration}')" />
                                     </div>
                                 {/foreach}
                             </div>
