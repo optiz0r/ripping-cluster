@@ -55,6 +55,14 @@ var rc = {
                 
                 if (d.dialog.buttons) {
                     switch (d.dialog.buttons.type) {
+                    case 'ok':
+                        $("#dialogfooterok").click(
+                            function() {
+                                rc.trigger(d.dialog.buttons.actions.ok, d.dialog.buttons.params);
+                            }
+                        );
+                        $("#dialogfooterok").show();
+                        break;
                     case 'yesno': 
                         $("#dialogfooteryes").click(
                             function() {
@@ -182,14 +190,23 @@ var rc = {
             for (var i in fields) {
                 var setting = fields[i];
                 var name = setting.name;
+                var value;
+                
+                switch(setting.type) {
+                    case 'checkbox':
+                        value = $(setting).is(':checked') ? 1 : 0;
+                        break;
+                    default:
+                        value = setting.value;
+                }
                 
                 if (/\[\]$/.test(name)) {
                     if (! settings[name]) {
                         settings[name] = [];
                     }
-                    settings[name].push(setting.value);
+                    settings[name].push(value);
                 } else { 
-                    settings[name] = setting.value;
+                    settings[name] = value;
                 }                    
             }
               
