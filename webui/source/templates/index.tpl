@@ -64,6 +64,11 @@
                 </div>
                 <div id="dialogcontent"></div>
                 <div id="dialogfooter">
+                    <div id="dialogfooterok" class="dialogfooterbuttonset">
+                        <fieldset>
+                            <input type="button" class="dialogbutton" id="dialogfooterok" value="Ok" />
+                        </fieldset>
+                    </div>
                     <div id="dialogfooteryesno" class="dialogfooterbuttonset">
                         <fieldset>
                             <input type="button" class="dialogbutton" id="dialogfooteryes" value="Yes" />
