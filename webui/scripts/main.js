@@ -63,6 +63,15 @@ var rc = {
                         );
                         $("#dialogfooterok").show();
                         break;
+                    case 'okcancel':
+                        $("#dialogfooterokcancel_ok").click(function() {
+                            rc.trigger(d.dialog.buttons.actions.ok, d.dialog.buttons.params);
+                        });
+                        $("#dialogfooterokcancel_cancel").click(function() {
+                            rc.trigger(d.dialog.buttons.actions.cancel, d.dialog.buttons.params); 
+                        });
+                        $("#dialogfooterokcancel").show();
+                        break;
                     case 'yesno': 
                         $("#dialogfooteryes").click(
                             function() {
@@ -124,6 +133,11 @@ var rc = {
         
         'delete-source-confirm': function(params) {
             rc.sources.remove_confirmed(params['plugin'], params['id']);
+        },
+        
+        'add-setting': function(params) {
+            // TODO
+            console.log('todo');
         }
         
     },
@@ -148,11 +162,17 @@ var rc = {
     settings: {
         
         init: function() {
-            $("#settings_save").click(
-                function() {
-                    rc.settings.save();
-                }
-            );
+            $("#settings_save").click(function() {
+                rc.settings.save();
+            });
+            
+            $("#settings_add").click(function() {
+                rc.settings.add();
+            });
+        },
+        
+        add: function() {
+            rc.ajax.get(base_url + "ajax/admin/add-setting/");
         },
         
         add_stringlist_field: function(id) {
