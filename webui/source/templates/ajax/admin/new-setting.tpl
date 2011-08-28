@@ -21,6 +21,10 @@
                 "close-dialog"
             ],
             "cancel": "close-dialog"
+        },
+        "params": {
+            "name": "settings_add_name",
+            "type": "settings_add_type"
         }
     }
 }

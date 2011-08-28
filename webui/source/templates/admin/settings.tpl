@@ -10,12 +10,8 @@
             {assign var='value' value=$config->get($name)}
             {assign var='type' value=$config->type($name)}
             {assign var='id' value=str_replace('.', '-',$name)}
-            <tr>
-                <td>{$name}</td>
-                <td>
-                    {include file="fragments/admin-setting-value.tpl"}
-                </td>
-            </tr>
+            
+            {include file="fragments/admin-setting-row.tpl"}
         {/foreach}
     </tbody>
     <tfoot>
