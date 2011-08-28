@@ -22,7 +22,7 @@
         <tr>
             <td colspan="2">
                 <input type="button" id="settings_save" name="save" value="Save" />
-                <input type="button" id="settings_add" name="add" value="Add Setting" />
+                <input type="button" id="settings_new" name="new_setting" value="New Setting" />
             </td>
         </tr>
     </tfoot>

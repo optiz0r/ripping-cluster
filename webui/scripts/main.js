@@ -166,13 +166,13 @@ var rc = {
                 rc.settings.save();
             });
             
-            $("#settings_add").click(function() {
-                rc.settings.add();
+            $("#settings_new").click(function() {
+                rc.settings.new_setting();
             });
         },
         
-        add: function() {
-            rc.ajax.get(base_url + "ajax/admin/add-setting/");
+        new_setting: function() {
+            rc.ajax.get(base_url + "ajax/admin/new-setting/");
         },
         
         add_stringlist_field: function(id) {

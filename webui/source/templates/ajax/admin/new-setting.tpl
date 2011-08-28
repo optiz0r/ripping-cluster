@@ -5,8 +5,8 @@
     },
     
     "dialogcontent": {
-        {include file="admin/add-setting.tpl" assign=add_setting_content}
-        "content": {$add_setting_content|json_encode}
+        {include file="fragments/new-setting-dialog.tpl" assign=new_setting_dialog_content}
+        "content": {$new_setting_dialog_content|json_encode}
     }
 
 },
