@@ -69,6 +69,12 @@
                             <input type="button" class="dialogbutton" id="dialogfooterok" value="Ok" />
                         </fieldset>
                     </div>
+                    <div id="dialogfooterokcancel" class="dialogfooterbuttonset">
+                        <fieldset>
+                            <input type="button" class="dialogbutton" id="dialogfooterokcancel_ok" value="Ok" />
+                            <input type="button" class="dialogbutton" id="dialogfooterokcancel_cancel" value="Cancel" />
+                        </fieldset>
+                    </div>
                     <div id="dialogfooteryesno" class="dialogfooterbuttonset">
                         <fieldset>
                             <input type="button" class="dialogbutton" id="dialogfooteryes" value="Yes" />

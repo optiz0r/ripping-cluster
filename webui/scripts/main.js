@@ -36,6 +36,7 @@ var rc = {
         success: function(d, s, x) {
             rc.page.update(d);
             rc.dialog.prepare(d);
+            rc.trigger_all(d);
         },
         
         failure: function(x, s, e) {
@@ -63,6 +64,15 @@ var rc = {
                         );
                         $("#dialogfooterok").show();
                         break;
+                    case 'okcancel':
+                        $("#dialogfooterokcancel_ok").click(function() {
+                            rc.trigger(d.dialog.buttons.actions.ok, d.dialog.buttons.params);
+                        });
+                        $("#dialogfooterokcancel_cancel").click(function() {
+                            rc.trigger(d.dialog.buttons.actions.cancel, d.dialog.buttons.params); 
+                        });
+                        $("#dialogfooterokcancel").show();
+                        break;
                     case 'yesno': 
                         $("#dialogfooteryes").click(
                             function() {
@@ -84,9 +94,16 @@ var rc = {
         },
         
         close: function() {
+            // Hide the dialog
             $("#dialog").hide();
-            $(".dialogfooterbuttonset").hide();
+            
+            // Remove the dialog content
             $("#dialogcontent").html();
+            
+            // Hide all buttons
+            $(".dialogfooterbuttonset").hide();
+            // Strip all event handlers
+            $(".dialogfooterbuttonset input[type='button']").unbind('click');
         }        
         
     },
@@ -124,6 +141,14 @@ var rc = {
         
         'delete-source-confirm': function(params) {
             rc.sources.remove_confirmed(params['plugin'], params['id']);
+        },
+        
+        'add-setting': function(params) {
+            rc.ajax.post(base_url + 'ajax/admin/add-setting/name/' + $('#'+params.name).val() + '/type/' + $('#'+params.type).val() + '/');
+        },
+        
+        'add_setting_row': function(params) {
+            $("#settings tbody").append(params.content);
         }
         
     },
@@ -145,14 +170,28 @@ var rc = {
         }
     },
     
+    trigger_all: function(params) {
+        if (params.actions) {
+            for (var action in params.actions) {
+                rc.trigger(action, params.actions[action]);
+            }
+        }
+    },
+    
     settings: {
         
         init: function() {
-            $("#settings_save").click(
-                function() {
-                    rc.settings.save();
-                }
-            );
+            $("#settings_save").click(function() {
+                rc.settings.save();
+            });
+            
+            $("#settings_new").click(function() {
+                rc.settings.new_setting();
+            });
+        },
+        
+        new_setting: function() {
+            rc.ajax.get(base_url + "ajax/admin/new-setting/");
         },
         
         add_stringlist_field: function(id) {
