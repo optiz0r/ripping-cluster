@@ -89,6 +89,14 @@ var rc = {
                     }
                 }
                 
+                if (d.dialog.title) {
+                    $('#dialogheadertitle').html(d.dialog.title);
+                }
+                
+                if (d.dialog.content) {
+                    $('#dialogcontent').html(d.dialog.content);
+                }
+                
                 $("#dialog").show();
             }
         },
@@ -149,6 +157,11 @@ var rc = {
         
         'add_setting_row': function(params) {
             $("#settings tbody").append(params.content);
+        },
+        
+        'remove_setting': function(params) {
+            $('#setting_' + params.id + '_row').remove();
+            rc.ajax.post(base_url + 'ajax/admin/remove-setting/name/' + params.name + '/');
         }
         
     },
@@ -192,6 +205,30 @@ var rc = {
         
         new_setting: function() {
             rc.ajax.get(base_url + "ajax/admin/new-setting/");
+        },
+        
+        remove_setting: function(id, name) {
+            rc.dialog.prepare({
+                dialog: {
+                    show: true,
+                    title: 'Remove setting',
+                    content: "Do you really want to remove setting '" + name + "'",
+                    buttons: {
+                        type: 'okcancel',
+                        actions: {
+                            ok: [
+                                'remove_setting',
+                                'close-dialog'
+                            ],
+                            cancel: 'close-dialog'
+                        },
+                        params: {
+                            id: id,
+                            name: name
+                        }
+                    }
+                }
+            });
         },
         
         add_stringlist_field: function(id) {

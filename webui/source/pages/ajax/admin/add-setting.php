@@ -38,6 +38,7 @@ try {
     $this->smarty->assign('success', $result);
     
     $this->smarty->assign('name', $name);
+    $this->smarty->assign('id', str_replace('.', '-',$name));
     $this->smarty->assign('type', $type);
     $this->smarty->assign('value', '');
 
