@@ -25,11 +25,12 @@ class RippingCluster_Main extends SihnonFramework_Main {
                 $this->smarty->compile_dir  = static::makeAbsolutePath($smarty_tmp . '/tmp/templates');
                 $this->smarty->cache_dir    = static::makeAbsolutePath($smarty_tmp . '/tmp/cache');
                 $this->smarty->config_dir   = static::makeAbsolutePath($smarty_tmp . '/config');
+                $this->smarty->plugins_dir[]= static::makeAbsolutePath('./source/smarty/plugins');
                  
                 $this->smarty->registerPlugin('modifier', 'formatDuration', array('RippingCluster_Main', 'formatDuration'));
                 $this->smarty->registerPlugin('modifier', 'formatFilesize', array('RippingCluster_Main', 'formatFilesize'));
 
-                $this->smarty->assign('version', '0.2.1');
+                $this->smarty->assign('version', '0.3');
                 $this->smarty->assign('messages', array());
                  
                 $this->smarty->assign('base_uri', $this->base_uri);

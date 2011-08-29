@@ -8,4 +8,10 @@
 			<li><a href="{$base_uri}sources/list" title="Browse Sources">Sources</a></li>
     	</ul>
     </li>
+    
+    <li>Admin
+        <ul>
+            <li><a href="{$base_uri}admin/settings" title="Edit Settings">Settings</a></li>
+        </ul>
+    </li>    
 </ul>
