@@ -6,7 +6,7 @@
             "content": {$sources_html|json_encode}
         }
     {else}
-        "dialogheadertitle" {
+        "dialogheadertitle": {
             "content": "Delete Source"
         },
         
