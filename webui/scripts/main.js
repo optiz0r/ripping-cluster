@@ -112,7 +112,33 @@ var rc = {
             $(".dialogfooterbuttonset").hide();
             // Strip all event handlers
             $(".dialogfooterbuttonset input[type='button']").unbind('click');
-        }        
+        },
+        
+        error: function(title, content, messages) {
+            var formatted_content = $('<div>').append($('<p>').text('content'));
+            if (messages) {
+                var formatted_messages = $('<ul>');
+                for (var message in messages) {
+                    formatted_messages.append($('<li>').text(message));
+                }
+                
+                formatted_content.append($('<p>').text('These messages were reported:').append(formatted_messages));
+            }
+            
+            rc.dialog.prepare({
+                dialog: {
+                    show: true,
+                    title: title,
+                    content: formatted_content,
+                    buttons: {
+                        type: 'ok',
+                        actions: {
+                            ok: 'close-dialog'
+                        }
+                    }
+                }                
+            });
+        }
         
     },
     
@@ -159,9 +185,21 @@ var rc = {
             $("#settings tbody").append(params.content);
         },
         
+        'rename_setting': function(params) {
+            rc.ajax.post(base_url + 'ajax/admin/rename-setting/name/' + params.name + '/new-name/' + $('#'+params.new_name_field).val() + '/confirm/');
+        },
+        
+        'rename_setting_confirm': function(params) {
+            $('#setting_'+params.old_id+'_row').replaceWith($(params.content));
+        },
+        
         'remove_setting': function(params) {
-            $('#setting_' + params.id + '_row').remove();
             rc.ajax.post(base_url + 'ajax/admin/remove-setting/name/' + params.name + '/');
+            rc.trigger('remove_setting_row', params);
+        },
+        
+        'remove_setting_row': function(params) {
+            $('#setting_' + params.id + '_row').remove();
         }
         
     },
@@ -205,6 +243,10 @@ var rc = {
         
         new_setting: function() {
             rc.ajax.get(base_url + "ajax/admin/new-setting/");
+        },
+        
+        rename_setting: function(id, name) {
+            rc.ajax.get(base_url + "ajax/admin/rename-setting/name/" + name + "/");
         },
         
         remove_setting: function(id, name) {
