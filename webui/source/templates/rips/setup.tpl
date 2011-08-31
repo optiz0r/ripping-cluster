@@ -43,7 +43,7 @@
 			</div>
 			<div>
 				<label for="global-video-height">Video height</label>
-				<input type="text" id="global-video-width" name="rip-options[video-width]" value="0" />
+				<input type="text" id="global-video-height" name="rip-options[video-height]" value="0" />
 				<em>(Use 0 to leave size unchanged from source.)</em>
 			</div>
 			
