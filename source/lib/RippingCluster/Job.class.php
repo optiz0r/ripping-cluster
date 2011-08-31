@@ -184,7 +184,7 @@ class RippingCluster_Job {
         $database->insert(
         	'INSERT INTO jobs 
         	(id,name,source_plugin,rip_plugin,source,destination,title,format,video_codec,video_width,video_height,quantizer,deinterlace,audio_tracks,audio_codecs,audio_names,subtitle_tracks)
-        	VALUES(NULL,:name,:source,:destination,:title,:format,:video_codec,:video_width,:video_height,:quantizer,:deinterlace,:audio_tracks,:audio_codecs,:audio_names,:subtitle_tracks)',
+        	VALUES(NULL,:name,:source_plugin,:rip_plugin,:source,:destination,:title,:format,:video_codec,:video_width,:video_height,:quantizer,:deinterlace,:audio_tracks,:audio_codecs,:audio_names,:subtitle_tracks)',
             array(
                 array('name' => 'name',            'value' => $this->name,                 'type' => PDO::PARAM_STR),
                 array('name' => 'source_plugin',   'value' => $this->source_plugin,        'type' => PDO::PARAM_STR),
