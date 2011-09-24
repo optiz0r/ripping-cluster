@@ -11,9 +11,9 @@
             var base_url = "{$base_url|escape:'quote'}";
         </script>
         
-        <link type="text/css" href="{$base_uri}styles/3rdparty/jquery-ui/smoothness/jquery-ui-1.8.custom.css" rel="Stylesheet" />	
-		<script type="text/javascript" src="{$base_uri}scripts/3rdparty/jquery-1.4.2.js"></script>
-		<script type="text/javascript" src="{$base_uri}scripts/3rdparty/jquery-ui-1.8.custom.min.js"></script>
+        <link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" rel="Stylesheet" />	
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="{$base_uri}scripts/main.js"></script>
     </head>
     <body>
