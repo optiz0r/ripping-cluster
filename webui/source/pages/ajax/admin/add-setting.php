@@ -30,6 +30,10 @@ try {
             $type = Sihnon_Config::TYPE_STRING_LIST;
             $value = array();
         } break;
+        case 'hash': {
+            $type = Sihnon_Config::TYPE_HASH;
+            $value = array();
+        } break;
     }
     
     // Add the new (empty) value. This is because no suitable UI has been presented yet.

@@ -14,6 +14,7 @@
                     <option value="bool">Boolean</option>
                     <option value="string">String</option>
                     <option value="string-list">String List</option>
+                    <option value="hash">Hash</option>
                 </select>
             </td>
         </tr>

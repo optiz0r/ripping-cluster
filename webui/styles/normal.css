@@ -155,6 +155,12 @@ table#settings td {
 table#settings input[type=text] {
     width: 40em;    
 }
+table#settings input.hash_key {
+	width: 10em;
+}
+table#settings input.hash_value {
+	width: 25em;
+}
 .settings_addfieldcontainer {
     text-align: right;    
 }
