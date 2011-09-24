@@ -22,4 +22,22 @@
             <input type="button" value="+" class="settings_field_add" onclick="rc.settings.add_stringlist_field('{$id}')" />
         </div>
     {/case}
+    {case Sihnon_Config::TYPE_HASH}
+        <div id="container_{$id}">
+            {foreach from=$value item=hash_value key=hash_key name=settings}
+                <div id="settings_{$id}_line{$smarty.foreach.settings.iteration}">
+                    <input type="text" value="{$hash_key}" class="setting hash_key" />
+                    <input type="text" name="{$id}[{$hash_key}]" value="{$hash_value}" class="setting hash_value" />
+                    <input type="button" value="-" class="settings_field_remove" onclick="rc.settings.remove_hash_field('{$id}', '{$smarty.foreach.settings.iteration}')" />
+                </div>
+            {/foreach}
+        </div>
+        <div class="settings_addfieldcontainer">
+            <input type="hidden" id="settings_{$id}_next" value="{$smarty.foreach.settings.iteration+1}" />
+            <input type="button" value="+" class="settings_field_add" onclick="rc.settings.add_hash_field('{$id}')" />
+        </div>
+        
+    {/case}
+    {default}
+        <em>Unsupported setting type!</em>
 {/switch}

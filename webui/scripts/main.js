@@ -280,11 +280,11 @@ var rc = {
             
             var line = $('<div>');
             line.attr('id', 'settings_'+id+'_line'+next.val());
-            line.append($('<input type="text" class="settings_field_string" />'));
+            line.append($('<input type="text" name="'+id+'[]" class="setting settings_field_string" />'));
             line.append(' ');
             var button = $('<input type="button" value="-" class="settings_field_remove"/>');
             button.click(function() {
-                rc.settings.remove_field(id, next_value);
+                rc.settings.remove_stringlist_field(id, next_value);
             });
             line.append(button);
             
@@ -293,12 +293,43 @@ var rc = {
             
             // Increment the next counter
             next.val(parseInt(next_value)+1);
-            
         },
     
         remove_stringlist_field: function(id, line) {
             $("#settings_"+id+"_line"+line).remove();
-        }, 
+        },
+        
+        add_hash_field: function(id) {
+            var container = $('#container_'+id);
+            var next = $('#settings_'+id+'_next');
+            var next_value = next.val();
+            
+            var line = $('<div>');
+            line.attr('id', 'settings_'+id+'_line'+next.val());
+            
+            var hash_key = $('<input type="text" value="New" class="setting hash_key" />');
+            var hash_value = $('<input type="text" id="setting_'+id+'_value'+next_value+'" name="'+id+'[New]" class="setting hash_value" />');
+            hash_key.change(function() {
+            	$('#setting_'+id+'_value'+next_value).attr('name', id+'['+$(this).val()+']');
+            })
+            
+            line.append(hash_key).append(' ').append(hash_value).append(' ');
+            var button = $('<input type="button" value="-" class="settings_field_remove"/>');
+            button.click(function() {
+                rc.settings.remove_hash_field(id, next_value);
+            });
+            line.append(button);
+            
+            // Add the new item
+            container.append(line);
+            
+            // Increment the next counter
+            next.val(parseInt(next_value)+1);
+        },
+        
+        remove_hash_field: function(id, line) {
+        	$("#settings_"+id+"_line"+line).remove();
+        },
         
         save: function() {
             
