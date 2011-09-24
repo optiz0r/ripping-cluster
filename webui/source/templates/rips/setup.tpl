@@ -19,7 +19,30 @@
 	
 			<div>
 				<label for="global-output-directory">Output directory</label>
-				<input type="text" id="global-ouput-directory" name="rip-options[output-directory]" value="{$default_output_directory}" />
+                <select id="global-output-directory" name="rip-options[output-directory]">
+                    <optgroup label="Custom"></optgroup>
+                    <optgroup label="Defaults">
+                        {foreach from=$default_output_directories item=dir key=name}
+                            <option value="{$dir}">{$name}</option>
+                        {/foreach}    
+                    </optgroup>
+                    <optgroup label="Recently Used">
+                        {foreach from=$recent_output_directories item=dir name=recent}
+                            {if $smarty.foreach.recent.iteration eq 1}
+                                <option value="{$dir}" selected="selected">{$dir}</option>
+                            {else}
+                                <option value="{$dir}">{$dir}</option>
+                            {/if}
+                        {/foreach}                        
+                    </optgroup>
+                </select>
+                <script type="text/javascript">
+                    $('#global-output-directory').jec({
+                        position: 1,
+                        blinkingCursor: true
+                    });
+                </script>
+                
 			</div>
 			
 			<div>
@@ -78,7 +101,7 @@
 
 						<div>		    			
 			    			<label for="rip-audio-{$title->id()}">Audio tracks</label>
-			    			<select id="rip-audio-{$title->id()}" name="rips[{$title->id()}][audio][]" size="5" multiple="multiple" class="rip-streams">
+			    			<select id="rip-audio-{$title->id()}" name="rips[{$title->id()}][audio][]" title="Select audio tracks" size="5" multiple="multiple" class="rip-streams">
 			    				{foreach from=$title->audioTracks() item=audio}
 			    					<option value="{$audio->id()}">{$audio->name()} - {$audio->channels()} ({$audio->language()}) </option>
 			    				{/foreach}
@@ -101,7 +124,7 @@
 		    		
 		    			<div>
 			    			<label for="rip-subtitle-{$title->id()}">Subtitle tracks</label>
-			    			<select id="rip-subtitle-{$title->id()}" name="rips[{$title->id()}][subtitles][]" size="5" multiple="multiple" class="rip-streams">
+			    			<select id="rip-subtitle-{$title->id()}" name="rips[{$title->id()}][subtitles][]" title="Select subtitle tracks" size="5" multiple="multiple" class="rip-streams">
 			    				{foreach from=$title->subtitleTracks() item=subtitle}
 			    					<option value="{$subtitle->id()}">{$subtitle->language()}</option>
 			    				{/foreach}
@@ -162,6 +185,9 @@
 			}
 		});
 		$("#global-quantizer").val($("#quantizer-slider").slider("value"));
+        $('select[multiple]').asmSelect({
+            
+        });
 	});
 	</script>
 	{/literal}
