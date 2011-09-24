@@ -44,7 +44,7 @@ if ($req->exists('submit')) {
             RippingCluster_Job::runAllJobs();
 
             # Redirect to the job queued page to show the jobs were successfully dispatched
-            RippingCluster_Page::redirect('rips/setup-rip/queued');
+            RippingCluster_Page::redirect('rips/setup/queued');
         } break;
 
         case 'delete': {
