@@ -4,7 +4,7 @@
 
 {if $running_jobs}
         {foreach from=$running_jobs item=job}
-            <li><a href="{$base_uri}jobs/details/id/{$job->id()}" title="View job details">{$job->name()}</a> <span class="progressBar" id="job_progress_{$job->id()}">{$job->currentStatus()->ripProgress()}%</span></li>
+            <li><a href="{$base_uri}jobs/details/id/{$job->id()}" title="View job details">{$job->name()}</a> <span class="progressBar" id="job_progress_{$job->id()}">{$job->currentStatus()->ripProgress()}%</span> ({RippingCluster_Main::formatDuration($job->calculateETA(), 1)} remaining)</li>
         {/foreach}
         <script type="text/javascript">
             $('.progressBar').each(
