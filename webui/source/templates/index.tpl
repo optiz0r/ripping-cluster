@@ -11,9 +11,13 @@
             var base_url = "{$base_url|escape:'quote'}";
         </script>
         
-        <link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" rel="Stylesheet" />	
+        <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" rel="Stylesheet" />
+        <link type="text/css" href="{$base_uri}styles/3rdparty/jquery.asmselect.css" rel="Stylesheet" />	
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="{$base_uri}scripts/3rdparty/jquery.jec-1.3.2.js"></script>
+        <script type="text/javascript" src="{$base_uri}scripts/3rdparty/jquery.asmselect.js"></script>
+        <script type="text/javascript" src="{$base_uri}scripts/3rdparty/jquery.progressbar.min.js"></script>
 		<script type="text/javascript" src="{$base_uri}scripts/main.js"></script>
     </head>
     <body>
