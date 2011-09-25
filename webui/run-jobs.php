@@ -2,12 +2,10 @@
 
 define('HBC_File', 'run-jobs');
 
-require_once '/etc/ripping-cluster/config.php';
-require_once(SihnonFramework_Lib . 'SihnonFramework/Main.class.php');
+require_once '_inc.php';
+
 require_once 'Net/Gearman/Client.php';
 
-SihnonFramework_Main::registerAutoloadClasses('SihnonFramework', SihnonFramework_Lib,
-												'RippingCluster', RippingCluster_Lib);
 
 try {
     $main = RippingCluster_Main::instance();
@@ -23,7 +21,7 @@ try {
     foreach ($jobs as $job) {
         // Enqueue the job using gearman
         $args = $job->queue();
-        $task = new Net_Gearman_Task($args['method'], $args['rip_options']);
+        $task = new Net_Gearman_Task($args['method'], $args);
         $task->attachCallback('gearman_complete', Net_Gearman_Task::TASK_COMPLETE);
         $task->attachCallback('gearman_fail', Net_Gearman_Task::TASK_FAIL);
         $set->addTask($task);
