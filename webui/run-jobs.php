@@ -22,14 +22,14 @@ try {
     
     foreach ($jobs as $job) {
         // Enqueue the job using gearman
-        list($method, $rip_options) = $job->queue();
-        $task = new Net_Gearman_Task($method, $rip_options);
+        $args = $job->queue();
+        $task = new Net_Gearman_Task($args['method'], $args['rip_options']);
         $task->attachCallback('gearman_complete', Net_Gearman_Task::TASK_COMPLETE);
         $task->attachCallback('gearman_fail', Net_Gearman_Task::TASK_FAIL);
         $set->addTask($task);
         
         $job->updateStatus(RippingCluster_JobStatus::QUEUED);
-        RippingCluster_ClientLogEntry::info($log, $rip_options['id'], 'Job queued', 'client');
+        RippingCluster_ClientLogEntry::info($log, $args['rip_options']['id'], 'Job queued', 'client');
     }
     
     $job_count = count($jobs);

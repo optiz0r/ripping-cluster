@@ -244,7 +244,10 @@ class RippingCluster_Job {
             'subtitle_tracks' => $this->subtitle_tracks,
         );
         
-        return array('HandBrake', array('rip_options' => $rip_options));
+        return array(
+        	'method' => 'HandBrake', 
+        	'rip_options' => $rip_options
+        );
     }
 
     protected function loadStatuses() {
