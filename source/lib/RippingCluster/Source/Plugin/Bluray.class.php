@@ -68,6 +68,8 @@ class RippingCluster_Source_Plugin_Bluray extends RippingCluster_PluginBase impl
                 $source->cache();
             }
         }
+        
+        return $source;
     }
     
     /**
