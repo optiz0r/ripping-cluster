@@ -359,7 +359,12 @@ class RippingCluster_Job {
     }
 
     public static function runAllJobs() {
-        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('run-jobs.php'));
+        $env = $_ENV;
+        if (isset($_SERVER['RIPPING_CLUSTER_CONFIG'])) {
+            $env['RIPPING_CLUSTER_CONFIG'] = $_SERVER['RIPPING_CLUSTER_CONFIG'];
+        }
+        
+        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('run-jobs.php'), null, $env);
     }
     
 };
