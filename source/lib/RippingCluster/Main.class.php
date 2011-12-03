@@ -19,7 +19,7 @@ class RippingCluster_Main extends SihnonFramework_Main {
         switch (HBC_File) {
             case 'ajax':
             case 'index': {
-                $smarty_tmp = '/tmp/ripping-cluster';
+                $smarty_tmp = '/var/tmp/ripping-cluster';
                 $this->smarty = new Smarty();
                 $this->smarty->template_dir = static::makeAbsolutePath('./source/templates');
                 $this->smarty->compile_dir  = static::makeAbsolutePath($smarty_tmp . '/tmp/templates');
