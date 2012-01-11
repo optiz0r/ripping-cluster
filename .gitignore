@@ -4,5 +4,5 @@
 .settings
 /config.php
 /dbconfig.conf
-/webui/.htaccess
-/webui/tmp/*
+/public/.htaccess
+
