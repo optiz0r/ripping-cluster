@@ -61,7 +61,7 @@ class RippingCluster_JobStatus {
         $statuses = array();
 
         $database = RippingCluster_Main::instance()->database();
-        foreach ($database->selectList('SELECT * FROM job_status WHERE job_id=:job_id ORDER BY mtime ASC', array(
+        foreach ($database->selectList('SELECT * FROM job_status WHERE job_id=:job_id ORDER BY id ASC', array(
                 array('name' => 'job_id', 'value' => $job->id(), 'type' => PDO::PARAM_INT),
             )) as $row) {
             $statuses[] = RippingCluster_JobStatus::fromDatabaseRow($row);
