@@ -145,7 +145,22 @@ var rc = {
     page: {
         
         init: function() {
-        
+            $('.progressBar').each(
+                function() {
+                    $(this).progressBar({
+                        steps: 100,
+                        width: 120,
+                        height: 12,
+                        boxImage: base_uri + 'images/jquery.progressbar/progressbar.gif',
+                        barImage: {
+                            0:  base_uri + 'images/jquery.progressbar/progressbg_red.gif',
+                            25: base_uri + 'images/jquery.progressbar/progressbg_orange.gif',
+                            50: base_uri + 'images/jquery.progressbar/progressbg_yellow.gif',
+                            75: base_uri + 'images/jquery.progressbar/progressbg_green.gif',
+                        }
+                    });
+                }
+            );
         },
         
         update: function(d) {
