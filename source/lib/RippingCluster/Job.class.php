@@ -364,7 +364,7 @@ class RippingCluster_Job {
             $env['RIPPING_CLUSTER_CONFIG'] = $_SERVER['RIPPING_CLUSTER_CONFIG'];
         }
         
-        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('run-jobs.php'), null, $env);
+        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('../source/webui/run-jobs.php'), null, $env);
     }
     
 };
