@@ -48,7 +48,7 @@ var rc = {
     dialog: {
         
         init: function() {
-            $("#dialogheaderclose").click(rc.dialog.close);
+            $("#dialog-header-close").click(rc.dialog.close);
         },
         
         prepare: function(d) {
@@ -57,61 +57,67 @@ var rc = {
                 if (d.dialog.buttons) {
                     switch (d.dialog.buttons.type) {
                     case 'ok':
-                        $("#dialogfooterok").click(
+                        $("#dialog-footer-ok-ok").click(
                             function() {
                                 rc.trigger(d.dialog.buttons.actions.ok, d.dialog.buttons.params);
                             }
                         );
-                        $("#dialogfooterok").show();
+                        $("#dialog-footer-ok").show();
                         break;
                     case 'okcancel':
-                        $("#dialogfooterokcancel_ok").click(function() {
+                        $("#dialog-footer-okcancel-ok").click(function() {
                             rc.trigger(d.dialog.buttons.actions.ok, d.dialog.buttons.params);
                         });
-                        $("#dialogfooterokcancel_cancel").click(function() {
+                        $("#dialog-footer-okcancel-cancel").click(function() {
                             rc.trigger(d.dialog.buttons.actions.cancel, d.dialog.buttons.params); 
                         });
-                        $("#dialogfooterokcancel").show();
+                        $("#dialog-footer-okcancel").show();
                         break;
                     case 'yesno': 
-                        $("#dialogfooteryes").click(
+                        $("#dialog-footer-yesno-yes").click(
                             function() {
                                 rc.trigger(d.dialog.buttons.actions.yes, d.dialog.buttons.params);
                             }
                         );
-                        $("#dialogfooterno").click(
+                        $("#dialog-footer-yesno-no").click(
                             function() {
                                 rc.trigger(d.dialog.buttons.actions.no, d.dialog.buttons.params);
                             }
                         );
-                        $("#dialogfooteryesno").show();
+                        $("#dialog-footer-yesno").show();
                         break;
                     }
                 }
                 
                 if (d.dialog.title) {
-                    $('#dialogheadertitle').html(d.dialog.title);
+                    $('#dialog-header-title').html(d.dialog.title);
                 }
                 
                 if (d.dialog.content) {
-                    $('#dialogcontent').html(d.dialog.content);
+                    $('#dialog-body').html(d.dialog.content);
                 }
                 
-                $("#dialog").show();
+                $("#dialog").modal({
+                    show: true,
+                    backdrop: true,
+                    keyboard: true,
+                });
             }
         },
         
         close: function() {
             // Hide the dialog
-            $("#dialog").hide();
+            $("#dialog").modal({
+                show: false,
+            });
             
             // Remove the dialog content
-            $("#dialogcontent").html();
+            $("#dialog-body").html();
             
             // Hide all buttons
-            $(".dialogfooterbuttonset").hide();
+            $(".dialog-footer-buttonset").hide();
             // Strip all event handlers
-            $(".dialogfooterbuttonset input[type='button']").unbind('click');
+            $(".dialog-footer-buttonset input[type='button']").unbind('click');
         },
         
         error: function(title, content, messages) {
@@ -145,7 +151,18 @@ var rc = {
     page: {
         
         init: function() {
-            $('.progressBar').each(
+            rc.page.updateEvents($('#page_content'));
+        },
+        
+        update: function(d) {
+            for ( var f in d.page_replacements) {
+                $("#" + f).html(d.page_replacements[f].content);
+                rc.page.updateEvents('#' + f);
+            }            
+        },
+        
+        updateEvents: function(d) {
+            $(d).find('.progressBar').each(
                 function() {
                     $(this).progressBar({
                         steps: 100,
@@ -161,12 +178,24 @@ var rc = {
                     });
                 }
             );
-        },
-        
-        update: function(d) {
-            for ( var f in d.page_replacements) {
-                $("#" + f).html(d.page_replacements[f].content);
-            }            
+            
+            $(d).find('.hover-highlight').hover(
+                function() {
+                    $(this).addClass('highlight');
+                },
+                function() {
+                    $(this).removeClass('highlight');
+                }
+            );
+            
+            $(d).find('a[rel=popover]').popover({
+              offset: 10,
+              html: true,
+            });
+            
+            $(d).find('input[type=checkbox].select_all').click(function() {
+                $('input[type=checkbox].'+$(this).attr('id')).attr('checked', $(this).attr('checked') == 'checked');
+            });
         }
     },
     
@@ -268,7 +297,7 @@ var rc = {
             rc.dialog.prepare({
                 dialog: {
                     show: true,
-                    title: 'Remove setting',
+                    title: 'Remove this setting?',
                     content: "Do you really want to remove setting '" + name + "'",
                     buttons: {
                         type: 'okcancel',
@@ -322,11 +351,11 @@ var rc = {
             var line = $('<div>');
             line.attr('id', 'settings_'+id+'_line'+next.val());
             
-            var hash_key = $('<input type="text" value="New" class="setting hash_key" />');
-            var hash_value = $('<input type="text" id="setting_'+id+'_value'+next_value+'" name="'+id+'[New]" class="setting hash_value" />');
+            var hash_key = $('<input type="text" value="" class="small setting hash_key" />');
+            var hash_value = $('<input type="text" id="setting_'+id+'_value'+next_value+'" name="'+id+'[New]" class="xlarge setting hash_value" />');
             hash_key.change(function() {
             	$('#setting_'+id+'_value'+next_value).attr('name', id+'['+$(this).val()+']');
-            })
+            });
             
             line.append(hash_key).append(' ').append(hash_value).append(' ');
             var button = $('<input type="button" value="-" class="settings_field_remove"/>');

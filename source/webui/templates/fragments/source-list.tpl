@@ -7,7 +7,7 @@
 				{assign var='source_filename' value=$source->filename()}
 				{assign var='source_filename_encoded' value=$source->filenameEncoded()}
 				{assign var='source_cached' value=$source->isCached()}
-				<li>
+				<li class="hover-highlight">
 					[ <a href="{$base_uri}sources/details/plugin/{$source_plugin}/id/{$source_filename_encoded}" title="Browse source details">Browse</a> |
 		  			<a href="{$base_uri}rips/setup/plugin/{$source_plugin}/id/{$source_filename_encoded}" title="Rip this source">Rip</a> |
 		  			<a href="javascript:rc.sources.remove('{$source_plugin|escape:'quote'}', '{$source_filename_encoded|escape:'quote'}');" title="Delete this source">Delete</a> ]

@@ -4,7 +4,7 @@
         <title>{$title}</title>
 
         <!-- JQuery //-->
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
         <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" rel="Stylesheet" />
         <!-- JQuery Plugins //-->
@@ -99,31 +99,29 @@
 
         </div>
         
-        <div id="centrepoint">
-            <div id="dialog">
-                <div id="dialogheader">
-                    <div id="dialogheadertitle">Dialog</div>
-                    <div id="dialogheaderclose">X</div>
+        <div id="dialog" class="modal hide fade">
+            <div class="modal-header">
+                <a href="#" class="close">&times;</a>
+                <h3 id="dialog-header-title"></h3>
+            </div>
+            <div id="dialog-body" class="modal-body"></div>
+            <div id="dialog-footer" class="modal-footer">
+                <div id="dialog-footer-ok" class="dialog-footer-buttonset">
+                    <fieldset>
+                        <input type="button" class="btn primary" id="dialog-footer-ok-ok" value="Ok" />
+                    </fieldset>
                 </div>
-                <div id="dialogcontent"></div>
-                <div id="dialogfooter">
-                    <div id="dialogfooterok" class="dialogfooterbuttonset">
-                        <fieldset>
-                            <input type="button" class="dialogbutton" id="dialogfooterok" value="Ok" />
-                        </fieldset>
-                    </div>
-                    <div id="dialogfooterokcancel" class="dialogfooterbuttonset">
-                        <fieldset>
-                            <input type="button" class="dialogbutton" id="dialogfooterokcancel_ok" value="Ok" />
-                            <input type="button" class="dialogbutton" id="dialogfooterokcancel_cancel" value="Cancel" />
-                        </fieldset>
-                    </div>
-                    <div id="dialogfooteryesno" class="dialogfooterbuttonset">
-                        <fieldset>
-                            <input type="button" class="dialogbutton" id="dialogfooteryes" value="Yes" />
-                            <input type="button" class="dialogbutton" id="dialogfooterno" value="No" />
-                        </fieldset>
-                    </div>
+                <div id="dialog-footer-okcancel" class="dialog-footer-buttonset">
+                    <fieldset>
+                        <input type="button" class="btn primary" id="dialog-footer-okcancel-ok" value="Ok" />
+                        <input type="button" class="btn secondary" id="dialog-footer-okcancel-cancel" value="Cancel" />
+                    </fieldset>
+                </div>
+                <div id="dialog-footer-yesno" class="dialog-footer-buttonset">
+                    <fieldset>
+                        <input type="button" class="btn primary" id="dialog-footer-yesno-yes" value="Yes" />
+                        <input type="button" class="btn secondary" id="dialog-footer-yesno-no" value="No" />
+                    </fieldset>
                 </div>
             </div>
         </div>

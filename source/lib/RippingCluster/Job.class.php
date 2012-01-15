@@ -353,6 +353,10 @@ class RippingCluster_Job {
     public function destinationFilename() {
         return $this->destination_filename;
     }
+    
+    public function destinationFileBasename() {
+        return basename($this->destination_filename);
+    }
 
     public function title() {
         return $this->title;

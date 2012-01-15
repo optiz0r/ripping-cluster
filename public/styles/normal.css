@@ -32,53 +32,14 @@
         text-align: center;
     }
     
-    /* Centred dialog taken from http://stackoverflow.com/questions/1205457/how-to-design-a-css-for-a-centered-floating-confirm-dialog */
-    #centrepoint {
-        top: 50%;
-        left: 50%;
-        position: absolute;
-    }
-    #dialog {
-        position: relative;
-        width: 600px;
-        margin-left: -300px;
-        /*height: 20em;*/
-        margin-top: -20em;
-        
+    .dialog-footer-buttonset {
         display: none;
-        background: #eeeeee;
-        border: 2px solid #a7a09a;
     }
-    #dialogheader {
-        height: 2em;
-        width: 100%; 
-        margin: 0.3em;
-    }
-    #dialogheadertitle {
-        color: black;
-        font-weight: bold;
-        float: left;
-    }
-    #dialogheaderclose {
-        width: 1.2em;
-        height: 1.2em;
-        background-color: crimson;
-        color: white;
-        border: 1px solid fireBrick;
-        float: right;
-        margin-right: 1em;
-        text-align: center;
-        vertical-align: middle;
-        display: table-cell;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    #dialogcontent {
-        padding: 0.5em;
-    }
-    .dialogfooterbuttonset {
-        display: none;
-        text-align: right;
+    
+    .dialog-footer-buttonset fieldset {
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
     }
     
     .default {
@@ -92,16 +53,13 @@
         width: 16px;
     }
     
-    form#setup-rips input[type="text"] {
-    	width: 30em;
-    }
-    
     #quantizer-slider {
-    	width: 20em;	
+    	width: 10em;
+    	margin: 0.5em;
     }
     
-    select.rip-streams {
-        width: 20em;
+    .highlight {
+        background: #dceaf4;
     }
 }
 

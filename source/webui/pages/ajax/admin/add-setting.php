@@ -32,7 +32,7 @@ try {
         } break;
         case 'hash': {
             $type = Sihnon_Config::TYPE_HASH;
-            $value = array();
+            $value = array('' => '');
         } break;
     }
     

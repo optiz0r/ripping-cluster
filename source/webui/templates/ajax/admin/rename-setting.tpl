@@ -14,11 +14,11 @@
     "success": {$success|json_encode}
 {else}
     "page_replacements": {
-        "dialogheadertitle": {
+        "dialog-header-title": {
             "content": "Rename Setting"
         },
         
-        "dialogcontent": {
+        "dialog-body": {
             {include file="fragments/rename-setting-dialog.tpl" assign="content"}
             "content": {$content|json_encode}
         }

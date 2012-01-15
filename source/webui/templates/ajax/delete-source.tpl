@@ -6,11 +6,11 @@
             "content": {$sources_html|json_encode}
         }
     {else}
-        "dialogheadertitle": {
-            "content": "Delete Source"
+        "dialog-header-title": {
+            "content": "Delete this source?"
         },
         
-        "dialogcontent": {
+        "dialog-body": {
             {include file="fragments/delete-source.tpl" assign="delete_source_html"}
             "content": {$delete_source_html|json_encode}
         }

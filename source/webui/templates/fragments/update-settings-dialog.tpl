@@ -1,5 +1,5 @@
 <p>
-    Settings have been saved.
+    Your changes have been saved.
 </p>
 
 {if $messages}

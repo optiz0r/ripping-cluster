@@ -1,10 +1,10 @@
 "page_replacements": {
 
-    "dialogheadertitle": {
+    "dialog-header-title": {
         "content": "Add Setting"
     },
     
-    "dialogcontent": {
+    "dialog-body": {
         {include file="fragments/new-setting-dialog.tpl" assign=new_setting_dialog_content}
         "content": {$new_setting_dialog_content|json_encode}
     }

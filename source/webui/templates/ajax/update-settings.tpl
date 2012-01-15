@@ -1,10 +1,10 @@
 "page_replacements": {
 
-    "dialogheadertitle": {
-        "content": "Update Settings"
+    "dialog-header-title": {
+        "content": "Settings updated"
     },
     
-    "dialogcontent": {
+    "dialog-body": {
         {include file="fragments/update-settings-dialog.tpl" assign=dialog_content}
         "content": {$dialog_content|json_encode}
     }

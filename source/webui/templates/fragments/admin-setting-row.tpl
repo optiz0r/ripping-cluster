@@ -1,9 +1,11 @@
 <tr id="setting_{$id}_row">
     <td>
         <p>
-            {$name}<br />
-            <input type="button" id="setting_{$id}_rename" value="Rename" onclick="rc.settings.rename_setting('{$id}', '{$name}');" />
-            <input type="button" id="setting_{$id}_remove" value="Remove" onclick="rc.settings.remove_setting('{$id}', '{$name}');" />
+            <strong>{$name}</strong>
+        </p>
+        <p>
+            <button id="setting_{$id}_rename" class="btn" onclick="rc.settings.rename_setting('{$id}', '{$name}');">Rename</button>
+            <button id="setting_{$id}_remove" class="btn" onclick="rc.settings.remove_setting('{$id}', '{$name}');">Remove</button>
         </p>
     </td>
     <td>

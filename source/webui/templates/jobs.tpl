@@ -31,43 +31,40 @@
     <table>
         <thead>
             <tr>
+                <th>
+                    <input id="jobs_select_all" class="select_all" type="checkbox" />
+                    Actions
+                </th>
                 <th>Name</th>
                 <th>Destination</th>
-                <th>Title</th>
                 <th>Status</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {foreach from=$jobs item=job}
                 {assign var=current_status value=$job->currentStatus()}
                 <tr>
-                    <td><a href="{$base_uri}jobs/details/id/{$job->id()}" title="View job details">{$job->name()}</a></td>
-                    <td>
-                    	{$job->destinationFilename()}
-                    	{if $job->isFinished()}
-                    		({$job->outputFilesize()|formatFilesize})
-                    	{/if}
-                    </td>
-                    <td>{$job->title()}</td>
-                    <td>
-                        {$current_status->statusName()}
-                        {if $current_status->hasProgressInfo()}
-                            <br />
-                            Started: <em>{$current_status->ctime()|date_format:"%D %T"}</em><br />
-                            Progress: {$current_status->ripProgress()}%<br />
-                            Last update: <em>{$current_status->mtime()|date_format:"%D %T"}</em><br />
-                            ETA: <em>{$job->calculateETA()|formatDuration}</em>
-                        {/if}
-                    </td>
                     <td>
                         <fieldset>
-                            <input type="checkbox" name="include[]" value="{$job->id()}" />
+                            <input type="checkbox" class="jobs_select_all" name="include[]" value="{$job->id()}" />
                             <input type="image" class="icon" name="action" id="mark-failed-{$job->id()}" value="mark-failed[{$job->id()}]" src="{$base_uri}images/caution.png" alt="Mark job as failed" />
                             <input type="image" class="icon" name="action" id="redo-{$job->id()}" value="retry[{$job->id()}]" src="{$base_uri}images/redo.png" alt="Repeat job" />
                             <input type="image" class="icon" name="action" id="delete-{$job->id()}" value="delete[{$job->id()}]" src="{$base_uri}images/trash.png" alt="Delete job" />
                             <input type="image" class="icon" name="action" id="fix-broken-timestamps-{$job->id()}" value="fix-broken-timestamps[{$job->id()}]" src="{$base_uri}images/clock.png" alt="Fix broken status timestamps" />
                         </fieldset>
+                    </td>
+                    <td><a href="{$base_uri}jobs/details/id/{$job->id()}" title="View job details">{$job->name()}</a></td>
+                    <td>
+                        {include file="fragments/job-filename-popover.tpl" assign=popover_content}
+                    	<a href="#" rel="popover" data-placement="below" data-title="Destination details" data-content="{$popover_content|escape:html}">{$job->destinationFileBasename()|escape:html}</a>
+                    </td>
+                    <td>
+                        {include file="fragments/job-status-popover.tpl" assign=popover_content}
+                        <a href="#" rel="popover" title="{$current_status->statusName()|escape:html}" data-placement="below" data-content="{$popover_content|escape:html}">{$current_status->statusName()}</a>
+                        {if $current_status->hasProgressInfo()}
+                            <br />
+                            <small>{$job->calculateETA()|formatDuration:1} remaining</small>
+                        {/if}
                     </td>
                 </tr>
             {/foreach}

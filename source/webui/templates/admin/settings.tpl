@@ -17,8 +17,8 @@
     <tfoot>
         <tr>
             <td colspan="2">
-                <input type="button" id="settings_save" name="save" value="Save" />
-                <input type="button" id="settings_new" name="new_setting" value="New Setting" />
+                <button id="settings_save" class="btn primary" name="save">Save</button>
+                <button id="settings_new" class="btn" name="new_setting">New Setting</button>
             </td>
         </tr>
     </tfoot>
