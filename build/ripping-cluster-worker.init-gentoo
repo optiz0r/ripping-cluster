@@ -2,8 +2,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-PID_FILE="/var/run/ripping-cluster-worker.pid"
-
 depend() {
 	need localmount net
 	use dns logger puppetmaster netmount nfsmount
@@ -13,7 +11,8 @@ start() {
 	ebegin "Starting ripping-cluster-worker"
 	start-stop-daemon --start --quiet \
 		--background --make-pidfile --pidfile ${PID_FILE} \
-		--exec /usr/bin/php /usr/lib/ripping-cluster/worker/ripping-cluster-worker.php
+		--chuid ${USER} --user ${USER} \
+		--exec /usr/bin/php /usr/lib/ripping-cluster/source/worker/ripping-cluster-worker.php
 	eend $? "Failed to start ripping-cluster-worker"
 }
 
@@ -22,8 +21,10 @@ stop() {
 	start-stop-daemon --stop --quiet \
 		--pidfile ${PID_FILE}
 	local ret=$?
-	eend ${ret} "Failed to stop puppet"
-	rm -f ${PID_FILE}
+	
+	eend ${ret} "Failed to stop ripping-cluster-worker"
+	${ret} || rm -f ${PID_FILE}
+	
 	return ${ret}
 }
 
