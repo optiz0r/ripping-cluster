@@ -1,281 +1,178 @@
+/**
+ * Ripping Cluster Webui
+ * 
+ * Written by Ben Roberts
+ * Homepage: https://benroberts.net/projects/ripping-cluster/
+ * Code:     https://github.com/optiz0r/ripping-cluster-webui/
+ * 
+ * Dependencies:
+ *   - Bootstrap
+ *   - JQuery
+ *   - JQueryUI
+ *   - JQuery Progressbar
+ * 
+ * Released under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+ * http://creativecommons.org/licenses/by-nc-sa/3.0/
+ */
+
+/**
+ * Ripping Cluster object
+ * 
+ * Entry point for all ripping cluster webui code
+ */
 var rc = {
 
+    /**
+     * Initialises the webui code
+     */
     init: function() {
-        rc.ajax.init();
-        rc.dialog.init();
         rc.page.init();
-    },
         
-    ajax: {
-        
-        init: function() {
-        
-        },
-        
-        get: function(url) {
-            $.ajax({
-                url: url,
-                type: "GET", 
-                dataType: "json", 
-                success: rc.ajax.success, 
-                error: rc.ajax.failure
-            });
-        },
-        
-        post: function(url, data) {
-            $.ajax({
-                url: url,
-                type: "POST", 
-                dataType: "json",
-                data: data,
-                success: rc.ajax.success, 
-                error: rc.ajax.failure
-            });            
-        },
-        
-        success: function(d, s, x) {
-            rc.page.update(d);
-            rc.dialog.prepare(d);
-            rc.trigger_all(d);
-        },
-        
-        failure: function(x, s, e) {
-            console.log("Ajax Failure: " + s, e);
-            console.log(x.responseText);
-        }
-    },
-
-    dialog: {
-        
-        init: function() {
-            $("#dialog-header-close").click(rc.dialog.close);
-        },
-        
-        prepare: function(d) {
-            if (d.dialog && d.dialog.show) {
-                
-                if (d.dialog.buttons) {
-                    switch (d.dialog.buttons.type) {
-                    case 'ok':
-                        $("#dialog-footer-ok-ok").click(
-                            function() {
-                                rc.trigger(d.dialog.buttons.actions.ok, d.dialog.buttons.params);
-                            }
-                        );
-                        $("#dialog-footer-ok").show();
-                        break;
-                    case 'okcancel':
-                        $("#dialog-footer-okcancel-ok").click(function() {
-                            rc.trigger(d.dialog.buttons.actions.ok, d.dialog.buttons.params);
-                        });
-                        $("#dialog-footer-okcancel-cancel").click(function() {
-                            rc.trigger(d.dialog.buttons.actions.cancel, d.dialog.buttons.params); 
-                        });
-                        $("#dialog-footer-okcancel").show();
-                        break;
-                    case 'yesno': 
-                        $("#dialog-footer-yesno-yes").click(
-                            function() {
-                                rc.trigger(d.dialog.buttons.actions.yes, d.dialog.buttons.params);
-                            }
-                        );
-                        $("#dialog-footer-yesno-no").click(
-                            function() {
-                                rc.trigger(d.dialog.buttons.actions.no, d.dialog.buttons.params);
-                            }
-                        );
-                        $("#dialog-footer-yesno").show();
-                        break;
-                    }
-                }
-                
-                if (d.dialog.title) {
-                    $('#dialog-header-title').html(d.dialog.title);
-                }
-                
-                if (d.dialog.content) {
-                    $('#dialog-body').html(d.dialog.content);
-                }
-                
-                $("#dialog").modal({
-                    show: true,
-                    backdrop: true,
-                    keyboard: true,
-                });
-            }
-        },
-        
-        close: function() {
-            // Hide the dialog
-            $("#dialog").modal({
-                show: false,
-            });
-            
-            // Remove the dialog content
-            $("#dialog-body").html();
-            
-            // Hide all buttons
-            $(".dialog-footer-buttonset").hide();
-            // Strip all event handlers
-            $(".dialog-footer-buttonset input[type='button']").unbind('click');
-        },
-        
-        error: function(title, content, messages) {
-            var formatted_content = $('<div>').append($('<p>').text('content'));
-            if (messages) {
-                var formatted_messages = $('<ul>');
-                for (var message in messages) {
-                    formatted_messages.append($('<li>').text(message));
-                }
-                
-                formatted_content.append($('<p>').text('These messages were reported:').append(formatted_messages));
-            }
-            
-            rc.dialog.prepare({
-                dialog: {
-                    show: true,
-                    title: title,
-                    content: formatted_content,
-                    buttons: {
-                        type: 'ok',
-                        actions: {
-                            ok: 'close-dialog'
-                        }
-                    }
-                }                
-            });
-        }
-        
+        rc.sources.init();
+        rc.settings.init();
     },
     
+    /**
+     * Page module
+     * 
+     * Configures hooks for updating pages
+     */
     page: {
         
+        /**
+         * Initialises the module
+         */
         init: function() {
-            rc.page.updateEvents($('#page_content'));
-        },
-        
-        update: function(d) {
-            for ( var f in d.page_replacements) {
-                $("#" + f).html(d.page_replacements[f].content);
-                rc.page.updateEvents('#' + f);
-            }            
-        },
-        
-        updateEvents: function(d) {
-            $(d).find('.progressBar').each(
-                function() {
-                    $(this).progressBar({
-                        steps: 100,
-                        width: 120,
-                        height: 12,
-                        boxImage: base_uri + 'images/jquery.progressbar/progressbar.gif',
-                        barImage: {
-                            0:  base_uri + 'images/jquery.progressbar/progressbg_red.gif',
-                            25: base_uri + 'images/jquery.progressbar/progressbg_orange.gif',
-                            50: base_uri + 'images/jquery.progressbar/progressbg_yellow.gif',
-                            75: base_uri + 'images/jquery.progressbar/progressbg_green.gif',
-                        }
-                    });
-                }
-            );
             
-            $(d).find('.hover-highlight').hover(
-                function() {
-                    $(this).addClass('highlight');
-                },
-                function() {
-                    $(this).removeClass('highlight');
-                }
-            );
-            
-            $(d).find('a[rel=popover]').popover({
-              offset: 10,
-              html: true,
+            // Display pretty progress bars
+            sf.page.addCallback('progress-bars', function(d) {
+                $(d).find('.progressBar').each(
+                    function() {
+                        $(this).progressBar({
+                            steps: 100,
+                            width: 120,
+                            height: 12,
+                            boxImage: base_uri + 'images/jquery.progressbar/progressbar.gif',
+                            barImage: {
+                                0:  base_uri + 'images/jquery.progressbar/progressbg_red.gif',
+                                25: base_uri + 'images/jquery.progressbar/progressbg_orange.gif',
+                                50: base_uri + 'images/jquery.progressbar/progressbg_yellow.gif',
+                                75: base_uri + 'images/jquery.progressbar/progressbg_green.gif',
+                            }
+                        });
+                    }
+                );
             });
             
-            $(d).find('input[type=checkbox].select_all').click(function() {
-                $('input[type=checkbox].'+$(this).attr('id')).attr('checked', $(this).attr('checked') == 'checked');
+            // Display highlights on given items when hovered over
+            sf.page.addCallback('hover-highlights', function(d) {
+                $(d).find('.hover-highlight').hover(
+                    function() {
+                        $(this).addClass('highlight');
+                    },
+                    function() {
+                        $(this).removeClass('highlight');
+                    }
+                );
             });
+            
+            // Display popovers
+            sf.page.addCallback('popovers', function(d) {
+                $(d).find('a[rel=popover]').popover({
+                  offset: 10,
+                  html: true,
+                });
+            });
+            
+            // Configure select-all checkboxes 
+            sf.page.addCallback('select-all-checkboxes', function(d) {
+                $(d).find('input[type=checkbox].select_all').click(function() {
+                    $('input[type=checkbox].'+$(this).attr('id')).attr('checked', $(this).attr('checked') == 'checked');
+                });
+            });
+            
+            // Update the content of the page on first load
+            sf.page.updateEvents($('#page_content'));
         }
+    
     },
     
+    /**
+     * Sources module
+     * 
+     * Contains code for interacting with rip sources
+     */
     sources: {
+       
+        /**
+         * Initialises the module
+         */
+        init: function() {
+            
+            sf.actions.addAction('delete-source-confirm', function(params) {
+                rc.sources.remove_confirmed(params['plugin'], params['id']);
+            });            
+            
+        },
         
+        /**
+         * Display a confirmation box for deleting a source
+         * 
+         * @param plugin Name of the plugin providing the source
+         * @param source Encoded filename of the source to be deleted
+         */
         remove: function(plugin, source) {
-            rc.ajax.get(base_url + "ajax/delete-source/plugin/" + plugin + "/id/" + source);        
+            sf.ajax.get(base_url + "ajax/delete-source/plugin/" + plugin + "/id/" + source);        
         },
         
+        /**
+         * Permanently delete a source
+         * 
+         * @param plugin Name of the plugin providing the source
+         * @param source Encoded filename of the source to be deleted
+         */
         remove_confirmed: function(plugin, source) {
-            rc.ajax.get(base_url + "ajax/delete-source/plugin/" + plugin + "/id/" + source + "/confirm/");
-        }
+            sf.ajax.get(base_url + "ajax/delete-source/plugin/" + plugin + "/id/" + source + "/confirm/");
+        },
         
     },
     
-    actions: {
-        
-        'close-dialog': function(params) {
-            rc.dialog.close();
-        },
-        
-        'delete-source-confirm': function(params) {
-            rc.sources.remove_confirmed(params['plugin'], params['id']);
-        },
-        
-        'add-setting': function(params) {
-            rc.ajax.post(base_url + 'ajax/admin/add-setting/name/' + $('#'+params.name).val() + '/type/' + $('#'+params.type).val() + '/');
-        },
-        
-        'add_setting_row': function(params) {
-            $("#settings tbody").append(params.content);
-        },
-        
-        'rename_setting': function(params) {
-            rc.ajax.post(base_url + 'ajax/admin/rename-setting/name/' + params.name + '/new-name/' + $('#'+params.new_name_field).val() + '/confirm/');
-        },
-        
-        'rename_setting_confirm': function(params) {
-            $('#setting_'+params.old_id+'_row').replaceWith($(params.content));
-        },
-        
-        'remove_setting': function(params) {
-            rc.ajax.post(base_url + 'ajax/admin/remove-setting/name/' + params.name + '/');
-            rc.trigger('remove_setting_row', params);
-        },
-        
-        'remove_setting_row': function(params) {
-            $('#setting_' + params.id + '_row').remove();
-        }
-        
-    },
-    
-    trigger: function(action, params) {
-        // Handle a list of actions by repeated calling self for each argument
-        if (action instanceof Array) {
-            for(i in action) {
-                rc.trigger(action[i], params);
-            }
-            return;
-        }
-        
-        // Check if action is supported, and execute it
-        if (rc.actions[action]) {
-            rc.actions[action](params);
-        } else {
-            console.log("Action not supported: " +action);
-        }
-    },
-    
-    trigger_all: function(params) {
-        if (params.actions) {
-            for (var action in params.actions) {
-                rc.trigger(action, params.actions[action]);
-            }
-        }
-    },
-    
+    /**
+     * Settings module
+     * 
+     * Contains code for handling the admin settings page
+     */
     settings: {
         
+        /**
+         * Configure actions for handling settings ajax requests.
+         */
         init: function() {
+            sf.actions.addAction('add-setting', function(params) {
+                sf.ajax.post(base_url + 'ajax/admin/add-setting/name/' + $('#'+params.name).val() + '/type/' + $('#'+params.type).val() + '/');
+            });
+            
+            sf.actions.addAction('add_setting_row', function(params) {
+                $("#settings tbody").append(params.content);
+            });
+            
+            sf.actions.addAction('rename_setting', function(params) {
+                sf.ajax.post(base_url + 'ajax/admin/rename-setting/name/' + params.name + '/new-name/' + $('#'+params.new_name_field).val() + '/confirm/');
+            });
+            
+            sf.actions.addAction('rename_setting_confirm', function(params) {
+                $('#setting_'+params.old_id+'_row').replaceWith($(params.content));
+            });
+            
+            sf.actions.addAction('remove_setting', function(params) {
+                sf.ajax.post(base_url + 'ajax/admin/remove-setting/name/' + params.name + '/');
+                sf.actions.trigger('remove_setting_row', params);
+            });
+            
+            sf.actions.addAction('remove_setting_row', function(params) {
+                $('#setting_' + params.id + '_row').remove();
+            });
+
             $("#settings_save").click(function() {
                 rc.settings.save();
             });
@@ -285,38 +182,65 @@ var rc = {
             });
         },
         
+        /**
+         * Add a new setting to the settings list
+         * 
+         * Presents a dialog box prompting for the setting details
+         * 
+         */
         new_setting: function() {
-            rc.ajax.get(base_url + "ajax/admin/new-setting/");
+            sf.ajax.get(base_url + "ajax/admin/new-setting/");
         },
         
+        /**
+         * Rename a setting
+         * 
+         * Presents a dialog box prompting for the new setting name
+         * 
+         * @param id DOM ID of the setting to be renamed
+         * @param name Name of the setting to be renamed
+         */
         rename_setting: function(id, name) {
-            rc.ajax.get(base_url + "ajax/admin/rename-setting/name/" + name + "/");
+            sf.ajax.get(base_url + "ajax/admin/rename-setting/name/" + name + "/");
         },
         
+        /**
+         * Removes a setting
+         * 
+         * Presents a dialog to confirm removal
+         * 
+         * @param id DOM ID of the setting to be removed
+         * @param name Name of the setting to be removed
+         */
         remove_setting: function(id, name) {
-            rc.dialog.prepare({
-                dialog: {
-                    show: true,
-                    title: 'Remove this setting?',
-                    content: "Do you really want to remove setting '" + name + "'",
-                    buttons: {
-                        type: 'okcancel',
-                        actions: {
-                            ok: [
-                                'remove_setting',
-                                'close-dialog'
-                            ],
-                            cancel: 'close-dialog'
-                        },
-                        params: {
-                            id: id,
-                            name: name
-                        }
+            sf.ui.dialog.prepare({
+                show: true,
+                title: 'Remove this setting?',
+                content: "Do you really want to remove setting '" + name + "'",
+                buttons: {
+                    type: 'okcancel',
+                    actions: {
+                        ok: [
+                            'remove_setting',
+                            'close-dialog'
+                        ],
+                        cancel: 'close-dialog'
+                    },
+                    params: {
+                        id: id,
+                        name: name
                     }
                 }
             });
         },
         
+        /**
+         * Adds a new field to a string list setting
+         * 
+         * For array(string) setting types, adds UI for a new element in the array
+         * 
+         * @param id DOM ID of the setting to have a new element added
+         */
         add_stringlist_field: function(id) {
             var container = $('#container_'+id);
             var next = $('#settings_'+id+'_next');
@@ -326,7 +250,7 @@ var rc = {
             line.attr('id', 'settings_'+id+'_line'+next.val());
             line.append($('<input type="text" name="'+id+'[]" class="setting settings_field_string" />'));
             line.append(' ');
-            var button = $('<input type="button" value="-" class="settings_field_remove"/>');
+            var button = $('<button class="btn small settings_field_remove">-</button>');
             button.click(function() {
                 rc.settings.remove_stringlist_field(id, next_value);
             });
@@ -339,10 +263,25 @@ var rc = {
             next.val(parseInt(next_value)+1);
         },
     
+        /**
+         * Removes a field from a string list setting
+         * 
+         * For array(string) setting types, removes the UI for an element in the array
+         * 
+         * @param id DOM ID of the setting to be modified
+         * @param line Number of the line to be removed
+         */
         remove_stringlist_field: function(id, line) {
             $("#settings_"+id+"_line"+line).remove();
         },
         
+        /**
+         * Add a new Hash setting key
+         * 
+         * For hash setting types, adds UI for a new key
+         * 
+         * @param id DOM ID of the setting to be modified
+         */
         add_hash_field: function(id) {
             var container = $('#container_'+id);
             var next = $('#settings_'+id+'_next');
@@ -358,7 +297,7 @@ var rc = {
             });
             
             line.append(hash_key).append(' ').append(hash_value).append(' ');
-            var button = $('<input type="button" value="-" class="settings_field_remove"/>');
+            var button = $('<button class="btn small settings_field_remove">-</button>');
             button.click(function() {
                 rc.settings.remove_hash_field(id, next_value);
             });
@@ -371,10 +310,22 @@ var rc = {
             next.val(parseInt(next_value)+1);
         },
         
+        /**
+         * Removes a hash setting key
+         * 
+         * For hash setting types, removes the UI for a specific key
+         * 
+         * @param id DOM ID of the setting to be modified
+         * @param line Line number of the hash key to be removed
+         */
         remove_hash_field: function(id, line) {
         	$("#settings_"+id+"_line"+line).remove();
         },
         
+        /**
+         * Saves the current setting values to the database
+         * 
+         */
         save: function() {
             
             var settings = {};
@@ -403,7 +354,7 @@ var rc = {
                 }                    
             }
               
-            rc.ajax.post(base_url + "ajax/update-settings/", settings);
+            sf.ajax.post(base_url + "ajax/update-settings/", settings);
             
         }
         

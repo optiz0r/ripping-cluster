@@ -27,6 +27,7 @@
         <script type="text/javascript" src="{$base_uri}scripts/3rdparty/bootstrap-modal.js"></script>
         
         <!-- Local //-->
+        <script type="text/javascript" src="{$base_uri}scripts/sihnon-js-lib/sihnon-framework.js"></script>
         <script type="text/javascript" src="{$base_uri}scripts/main.js"></script>
         
         <link rel="stylesheet/less" href="{$base_uri}less/bootstrap.less" media="all" />

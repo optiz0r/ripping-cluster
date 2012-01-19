@@ -23,7 +23,3 @@
         </tr>
     </tfoot>
 </table>
-
-<script type="text/javascript">
-    rc.settings.init();
-</script>
