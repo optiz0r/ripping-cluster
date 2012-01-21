@@ -11,7 +11,7 @@ if ($req->exists('submit')) {
     
     // Update the recently used list
     $recent_output_directories = $config->get('rips.output_directories.recent');
-    if (( $key = array_search($_POST['rip-options']['output-directory'], $recent_output_directories, true))) {
+    if (( $key = array_search($_POST['rip-options']['output-directory'], $recent_output_directories, true)) >= 0) {
         // Move the entry to the top of the recently used list if necessary
         $recent_directory = array_splice($recent_output_directories, $key, 1);
         if ($key > 0) {
