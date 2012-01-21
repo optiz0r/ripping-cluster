@@ -353,6 +353,10 @@ class RippingCluster_Job {
     public function destinationFilename() {
         return $this->destination_filename;
     }
+    
+    public function destinationFileBasename() {
+        return basename($this->destination_filename);
+    }
 
     public function title() {
         return $this->title;
@@ -364,7 +368,7 @@ class RippingCluster_Job {
             $env['RIPPING_CLUSTER_CONFIG'] = $_SERVER['RIPPING_CLUSTER_CONFIG'];
         }
         
-        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('run-jobs.php'), null, $env);
+        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('../source/webui/run-jobs.php'), null, $env);
     }
     
 };

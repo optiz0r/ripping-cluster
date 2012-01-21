@@ -1,0 +1,76 @@
+/**
+ * StatusBoard normal stylesheet
+ *
+ */
+@import url('http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css'); 
+@CHARSET "UTF-8";
+
+@media all {
+    body {
+        margin: 0em;
+        margin-top: 60px;
+        padding-top: 40px;
+        padding: 0em;
+        font-family: verdana, helvetica, sans-serif;
+/*        background: #F7F7F7;*/
+    }
+    
+    a {
+        color: gray;
+    }
+    
+    label {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+    
+    footer {
+        padding: 2em;
+        font-size: smaller;
+        font-style: italic;
+        color: #333333;
+        text-align: center;
+    }
+    
+    .dialog-footer-buttonset {
+        display: none;
+    }
+    
+    .dialog-footer-buttonset fieldset {
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+    
+    .default {
+        background: beige;
+        color: darkgray;
+        font-style: italic;
+    }
+    
+    .icon {
+        height: 16px;
+        width: 16px;
+    }
+    
+    #quantizer-slider {
+    	width: 10em;
+    	margin: 0.5em;
+    }
+    
+    .highlight {
+        background: #dceaf4;
+    }
+}
+
+@media print {
+    
+    .no-print {
+        display: none;
+    }
+    
+    body {
+        margin: 0;
+    }
+    
+}
