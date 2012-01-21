@@ -1,0 +1,5 @@
+# Which user to run the worker daemon as
+USER="media"
+
+# File to store the running daemon's PID in
+PID_FILE="/var/run/ripping-cluster-worker.pid"

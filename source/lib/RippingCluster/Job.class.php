@@ -184,7 +184,7 @@ class RippingCluster_Job {
         $database->insert(
         	'INSERT INTO jobs 
         	(id,name,source_plugin,rip_plugin,source,destination,title,format,video_codec,video_width,video_height,quantizer,deinterlace,audio_tracks,audio_codecs,audio_names,subtitle_tracks)
-        	VALUES(NULL,:name,:source,:destination,:title,:format,:video_codec,:video_width,:video_height,:quantizer,:deinterlace,:audio_tracks,:audio_codecs,:audio_names,:subtitle_tracks)',
+        	VALUES(NULL,:name,:source_plugin,:rip_plugin,:source,:destination,:title,:format,:video_codec,:video_width,:video_height,:quantizer,:deinterlace,:audio_tracks,:audio_codecs,:audio_names,:subtitle_tracks)',
             array(
                 array('name' => 'name',            'value' => $this->name,                 'type' => PDO::PARAM_STR),
                 array('name' => 'source_plugin',   'value' => $this->source_plugin,        'type' => PDO::PARAM_STR),
@@ -244,7 +244,10 @@ class RippingCluster_Job {
             'subtitle_tracks' => $this->subtitle_tracks,
         );
         
-        return array('HandBrake', array('rip_options' => $rip_options));
+        return array(
+        	'method' => 'HandBrake', 
+        	'rip_options' => $rip_options
+        );
     }
 
     protected function loadStatuses() {
@@ -350,13 +353,22 @@ class RippingCluster_Job {
     public function destinationFilename() {
         return $this->destination_filename;
     }
+    
+    public function destinationFileBasename() {
+        return basename($this->destination_filename);
+    }
 
     public function title() {
         return $this->title;
     }
 
     public static function runAllJobs() {
-        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('run-jobs.php'));
+        $env = $_ENV;
+        if (isset($_SERVER['RIPPING_CLUSTER_CONFIG'])) {
+            $env['RIPPING_CLUSTER_CONFIG'] = $_SERVER['RIPPING_CLUSTER_CONFIG'];
+        }
+        
+        RippingCluster_BackgroundTask::run('/usr/bin/php ' . RippingCluster_Main::makeAbsolutePath('../source/webui/run-jobs.php'), null, $env);
     }
     
 };
