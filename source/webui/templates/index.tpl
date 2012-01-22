@@ -85,11 +85,11 @@
     
             <footer class="no-print">
                 <p>
-                    Powered by RippingCluster WebUI {$version}. Written by Ben Roberts.
+                    Powered by RippingCluster WebUI {$version}. Written by
+                    <a xmlns:cc="http://creativecommons.org/ns#" href="http://benroberts.net" property="cc:attributionName" rel="cc:attributionURL">Ben Roberts</a>
                 </p>
                 <p>
-                    This work by <a xmlns:cc="http://creativecommons.org/ns#" href="http://benroberts.net" property="cc:attributionName" rel="cc:attributionURL">Ben Roberts</a>
-                    is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.
+                    This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.
                     <br />
                     
                     <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">
