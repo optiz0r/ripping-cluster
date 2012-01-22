@@ -11,7 +11,7 @@ start() {
 	ebegin "Starting ripping-cluster-worker"
 	start-stop-daemon --start --quiet \
 		--background --make-pidfile --pidfile ${PID_FILE} \
-		--chuid ${USER} --user ${USER} \
+		--user ${USER} \
 		--exec /usr/bin/php /usr/lib/ripping-cluster/source/worker/ripping-cluster-worker.php
 	eend $? "Failed to start ripping-cluster-worker"
 }
