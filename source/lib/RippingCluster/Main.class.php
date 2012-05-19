@@ -28,11 +28,11 @@ class RippingCluster_Main extends SihnonFramework_Main {
             case 'index': {
                 $smarty_tmp = $this->config->get('templates.tmp_path', '/var/tmp/ripping-cluster');
                 $this->smarty = new Smarty();
-                $this->smarty->template_dir = static::makeAbsolutePath(self::TEMPLATE_DIR);
-                                $this->smarty->compile_dir  = static::makeAbsolutePath($smarty_tmp . '/templates');
-                $this->smarty->cache_dir    = static::makeAbsolutePath($smarty_tmp . '/cache');
-                $this->smarty->config_dir   = static::makeAbsolutePath($smarty_tmp . '/config');
-                $this->smarty->plugins_dir[]= static::makeAbsolutePath('../source/webui/smarty/plugins');
+                $this->smarty->setTemplateDir(static::makeAbsolutePath(self::TEMPLATE_DIR));
+                $this->smarty->setCompileDir(static::makeAbsolutePath($smarty_tmp . '/templates'));
+                $this->smarty->setCacheDir(static::makeAbsolutePath($smarty_tmp . '/cache'));
+                $this->smarty->setConfigDir(static::makeAbsolutePath($smarty_tmp . '/config'));
+                $this->smarty->addPluginsDir(static::makeAbsolutePath('../source/webui/smarty/plugins'));
                  
                 $this->smarty->registerPlugin('modifier', 'formatDuration', array('RippingCluster_Main', 'formatDuration'));
                 $this->smarty->registerPlugin('modifier', 'formatFilesize', array('RippingCluster_Main', 'formatFilesize'));
