@@ -2,6 +2,7 @@
 .buildpath
 .project
 .settings
+*.kdev4
 /config.php
 /dbconfig.conf
 /public/.htaccess
